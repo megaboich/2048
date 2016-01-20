@@ -1,19 +1,18 @@
 {
-  "name": "ts-2048",
+  "name": "2048-ts",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "2048 game written on TypeScript",
+  "main": "build/app.js",
   "dependencies": {
     "gulp": "^3.9.0",
     "merge2": "^1.0.0",
     "gulp-typescript": "^2.10.0",
     "jasmine-node": "^1.14.5",
+    "gulp-jasmine": "^2.2.1",
     "typescript": "^1.7.5",
     "tsd": "^0.6.5"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
   },
   "author": "",
   "license": "ISC"

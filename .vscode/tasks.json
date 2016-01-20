@@ -31,7 +31,12 @@
     "tasks": [
 		{
             "isBuildCommand": true,
-			"taskName": "default",
+			"taskName": "release",
+			"showOutput": "always"
+		},
+        {
+            "isTestCommand": true,
+			"taskName": "run_tests",
 			"showOutput": "always"
 		}
 	]
