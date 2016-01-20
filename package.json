@@ -1,0 +1,10 @@
+{
+    "dependencies": 
+    {
+        "typescript": ">= 1.7.5",
+        "tsd": ">= 0.6.5",
+        "gulp": ">=3.9.0",
+        "gulp-typescript": ">=2.10.0",
+        "jasmine-node":   ">= 1.14.5"
+    }
+}
