@@ -1,6 +1,6 @@
 ///<reference path="..\lib\typings\jasmine\jasmine.d.ts"/>
 
-///<reference path="..\mechanics\grid.ts"/>
+///<reference path="grid.ts"/>
 
 describe("Grid tests", function(){
     

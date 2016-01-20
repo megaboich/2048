@@ -12,7 +12,7 @@
 	"version": "0.1.0",
 
 	// The command is tsc. Assumes that tsc has been installed using npm install -g typescript
-	"command": "tsc",
+	"command": "build_proxy.cmd",
 
 	// The command is a shell script
 	"isShellCommand": true,
@@ -22,20 +22,17 @@
 
 	// use the standard tsc problem matcher to find compile problems
 	// in the output.
-	"problemMatcher": "$tsc",
+	"problemMatcher": "$gulp-tsc",
+    
+    "args": [
+        "--no-color"
+    ],
     
     "tasks": [
 		{
-            "taskName": "build-app",
-			"isBuildCommand": true,
-            // args is the HelloWorld program to compile.
-        	"args": ["-out", "spec\\all.spec.js", "spec\\all.spec.ts"]
-		},
-        {
-            "taskName": "build-test",
-            "isTestCommand": true,
-            // args is the HelloWorld program to compile.
-        	"args": ["-out", "app.js", "app.ts"]
+            "isBuildCommand": true,
+			"taskName": "default",
+			"showOutput": "always"
 		}
 	]
 }

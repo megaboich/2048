@@ -1,12 +1,16 @@
 var gulp = require('gulp');
-
 var ts = require('gulp-typescript');
+var merge = require('merge2');
  
 gulp.task('default', function () {
-	return gulp.src('src/**/*.ts')
+	var tsResult = gulp.src(['src/**/*.ts', 'lib/**/*.ts'])
 		.pipe(ts({
+            declarationFiles: true,
+            noExternalResolve: true,
 			noImplicitAny: true,
-			out: 'output.js'
+			out: 'app.js'
 		}))
-		.pipe(gulp.dest('built/local'));
+		.pipe(gulp.dest('build'));
+    
+    return tsResult;
 });
