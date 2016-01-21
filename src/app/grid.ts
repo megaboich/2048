@@ -1,61 +1,77 @@
 
-class GridState{
-    size: number;
-    cells: number[][];
+class GridState {
+    Size: number;
+    Cells: number[][];
 }
 
-class TilePosition{
-    x:number;
-    y:number;
-    constructor(x:number, y:number){
-        this.x = x;
-        this.y = y;
+class TilePosition {
+    X: number;
+    Y: number;
+    constructor(x: number, y: number) {
+        this.X = x;
+        this.Y = y;
     }
 }
 
-class Grid extends GridState{
-    constructor(size: number, savedState: GridState = null)
-    {
+class Grid extends GridState {
+    constructor(size: number, savedState: GridState = null) {
         super();
-        
-        this.size = (savedState == null)
+
+        this.Size = (savedState == null)
             ? size
-            : savedState.size;
-        
-        this.cells = new Array(this.size);
-        for(var ix=0; ix < this.size; ix++){
-            this.cells[ix] = new Array(this.size);
-            
-            for(var iy=0; iy < this.size; iy++){
-                this.cells[ix][iy] = (savedState == null)
+            : savedState.Size;
+
+        this.Cells = new Array(this.Size);
+        for (var ix = 0; ix < this.Size; ix++) {
+            this.Cells[ix] = new Array(this.Size);
+
+            for (var iy = 0; iy < this.Size; iy++) {
+                this.Cells[ix][iy] = (savedState == null)
                     ? 0
-                    : savedState.cells[ix][iy];
+                    : savedState.Cells[ix][iy];
             }
         }
     }
-    
-    insertTile(x: number, y:number, value:number):void 
-    {
-        this.cells[x][y] = value;
+
+    InsertTile(x: number, y: number, value: number): void {
+        if (x < 0) {
+            throw "X position " + x + "is < 0";
+        }
+
+        if (y < 0) {
+            throw "Y position " + y + "is < 0";
+        }
+
+        if (x >= this.Size) {
+            throw "X position " + x + "is more than grid size";
+        }
+
+        if (y >= this.Size) {
+            throw "Y position " + y + "is more than grid size";
+        }
+
+        if (this.Cells[x][y] != 0) {
+            throw "Cell with position " + x + ", " + y + " is occupied";
+        }
+
+        this.Cells[x][y] = value;
     }
 
-    removeTile(x: number, y:number):void 
-    {
-        this.cells[x][y] = 0;
+    RemoveTile(x: number, y: number): void {
+        this.Cells[x][y] = 0;
     }
-    
-    availableCells():TilePosition[]
-    {
-        var availPositions:Array<TilePosition> = [];
-        
-        for(var ix = 0; ix < this.size; ++ix){
-            for(var iy = 0; iy < this.size; ++iy){
-                if (this.cells[ix][iy] == 0){
+
+    AvailableCells(): TilePosition[] {
+        var availPositions: Array<TilePosition> = [];
+
+        for (var ix = 0; ix < this.Size; ++ix) {
+            for (var iy = 0; iy < this.Size; ++iy) {
+                if (this.Cells[ix][iy] == 0) {
                     availPositions.push(new TilePosition(ix, iy));
                 }
             }
         }
-        
-        return availPositions; 
+
+        return availPositions;
     }
 }
