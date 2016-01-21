@@ -3,7 +3,7 @@
 
 (() => {
     var game = new Game2048(4);
-    var render = <IGameRenderer>(new PixiGameRenderer(document, game));
+    var render = new PixiGameRenderer(document, game);
     game.OnTilesUpdate.RegisterObserver(render);
 
     Mousetrap.bind('up', function() {

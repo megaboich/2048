@@ -14,7 +14,7 @@
     "tasks": [
 		{
             "isBuildCommand": true,
-			"taskName": "release",
+			"taskName": "debug",
 			"showOutput": "always"
 		},
         {

@@ -1,5 +1,6 @@
 ///<reference path="grid.ts"/>
 ///<reference path="helpers/observable.ts"/>
+///<reference path="helpers/random.ts"/>
 
 enum MoveDirection{
     Up,
@@ -23,16 +24,17 @@ class Game2048 {
 
     ProcessInputAction(move: MoveDirection) {
         var event = new TilesUpdateEvent();
-        this.OnTilesUpdate.NotifyObservers(event);
-        
+               
         ++this.Scores;
         
         var availTitles = this.Grid.AvailableCells();
         if (availTitles.length > 0) {
-            var ti = Math.floor((Math.random() * availTitles.length) + 1);
+            var ti = Random.GetRandomInt(0, availTitles.length);
             var pos = availTitles[ti];
             
             this.Grid.InsertTile(pos.X, pos.Y, 2);
         }
+        
+        this.OnTilesUpdate.NotifyObservers(event);
     }
 }

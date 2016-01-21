@@ -1,4 +1,5 @@
 ///<reference path="game2048.ts"/>
+///<reference path="helpers/random.ts"/>
 ///<reference path="..\..\lib\typings\tsd.d.ts"/>
 
 interface IGameRenderer extends Observer<TilesUpdateEvent> {
@@ -64,9 +65,9 @@ class PixiGameRenderer implements IGameRenderer {
     }
 
     private getRandColor(): number {
-        var r = Math.floor(Math.random() * 120) + 120;
-        var g = Math.floor(Math.random() * 120) + 120;
-        var b = Math.floor(Math.random() * 120) + 120;
+        var r = Random.GetRandomInt(120, 255);
+        var g = Random.GetRandomInt(120, 255);
+        var b = Random.GetRandomInt(120, 255);
         return b + 256 * g + 256 * 256 * r;
     }
 }

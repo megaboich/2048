@@ -1,13 +1,14 @@
 {
-  "name": "2048-ts",
+  "name": "game-2048",
   "version": "1.0.0",
-  "description": "2048 game written on TypeScript",
+  "description": "Game 2048 written on TypeScript",
   "main": "build/app.js",
   "dependencies": {
     "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
     "gulp-jasmine": "^2.2.1",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-typescript": "^2.10.0",
-    "jasmine-node": "^1.14.5",
     "merge2": "^1.0.0",
     "tsd": "^0.6.5",
     "typescript": "^1.7.5"
