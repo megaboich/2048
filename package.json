@@ -5,15 +5,14 @@
   "main": "build/app.js",
   "dependencies": {
     "gulp": "^3.9.0",
-    "merge2": "^1.0.0",
+    "gulp-jasmine": "^2.2.1",
     "gulp-typescript": "^2.10.0",
     "jasmine-node": "^1.14.5",
-    "gulp-jasmine": "^2.2.1",
-    "typescript": "^1.7.5",
-    "tsd": "^0.6.5"
+    "merge2": "^1.0.0",
+    "tsd": "^0.6.5",
+    "typescript": "^1.7.5"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "author": "",
   "license": "ISC"
 }

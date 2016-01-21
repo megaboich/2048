@@ -1,4 +1,4 @@
-///<reference path="..\lib\typings\jasmine\jasmine.d.ts"/>
+///<reference path="..\..\lib\typings\tsd.d.ts"/>
 
 ///<reference path="grid.ts"/>
 
@@ -10,4 +10,4 @@ describe("Grid tests", function(){
         expect(g.size).toBe(4);
     });
     
-})
+});
