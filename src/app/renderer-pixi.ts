@@ -48,15 +48,22 @@ class PixiGameRenderer implements IGameRenderer {
         // Add tiles from game grid
         for (var ix = 0; ix < this.game.Grid.Size; ++ix) {
             for (var iy = 0; iy < this.game.Grid.Size; ++iy) {
-                if (this.game.Grid.Cells[ix][iy] != 0) {
+                var tileValue =this.game.Grid.Cells[ix][iy]; 
+                if (tileValue != 0) {
                     //Create graphics for cell
                     var graphics = new PIXI.Graphics();
                     graphics.lineStyle(1, 0xa0a0a0, 1);
-                    graphics.beginFill(this.getRandColor(), 1);
+                    graphics.beginFill(this.getTileColor(tileValue), 1);
                     graphics.drawRect(0, 0, 100, 100);
                     graphics.endFill();
                     graphics.x = 100 + ix * 100;
                     graphics.y = 150 + iy * 100;
+                    
+                    var tileText = new PIXI.Text(tileValue.toString());
+                    tileText.x = 30;
+                    tileText.y = 30;
+                    graphics.addChild(tileText);
+                    
                     this.stage.addChild(graphics);
                     this.tiles.push(graphics);
                 }
@@ -64,10 +71,36 @@ class PixiGameRenderer implements IGameRenderer {
         }
     }
 
-    private getRandColor(): number {
-        var r = Random.GetRandomInt(120, 255);
-        var g = Random.GetRandomInt(120, 255);
-        var b = Random.GetRandomInt(120, 255);
-        return b + 256 * g + 256 * 256 * r;
+    private getTileColor(value: number) {
+        switch (value) {
+            case 2:
+                return 0xeee4da;
+            case 4:
+                return 0xedc22e;
+            case 8:
+                return 0xedc22e;
+            case 16:
+                return 0xedc22e;
+            case 32:
+                return 0xedc22e;
+            case 64:
+                return 0xedc22e;
+            case 128:
+                return 0xedc22e;
+            case 256:
+                return 0xedc22e;
+            case 512:
+                return 0xedc22e;
+            case 1024:
+                return 0xedc22e;
+            case 2048:
+                return 0xedc22e;
+            case 4096:
+                return 0xedc22e;
+            case 8192:
+                return 0xedc22e;
+            default:
+                return 0xedc22e;
+        }
     }
 }

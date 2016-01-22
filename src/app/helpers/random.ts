@@ -11,4 +11,12 @@ class Random {
     static GetRandomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min)) + min;
     }
+    
+    
+    static GetRandColor(): number {
+        var r = this.GetRandomInt(120, 255);
+        var g = this.GetRandomInt(120, 255);
+        var b = this.GetRandomInt(120, 255);
+        return b + 256 * g + 256 * 256 * r;
+    }
 }

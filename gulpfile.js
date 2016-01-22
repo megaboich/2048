@@ -25,51 +25,64 @@ gulp.task('deploy_html_debug', function () {
     return taskResult;
 });
 
+function buildTypescript(sourcesArray, outDir, outFileName, isDebug, isIncludeSoourceMap) {
+    var x = gulp.src(sourcesArray, { base: 'src/app' });
+
+    if (isIncludeSoourceMap) {
+        x = x.pipe(sourcemaps.init());
+    }
+
+    x = x.pipe(ts({
+        sortOutput: true,
+        declarationFiles: true,
+        noExternalResolve: true,
+        noImplicitAny: true,
+        out: outFileName
+    }));
+
+    x = x.js;
+
+    if (isIncludeSoourceMap) {
+        x = x.pipe(sourcemaps.write({ debug: true, includeContent: true })) // Now the sourcemaps are added to the .js file 
+    }
+
+    x = x.pipe(gulp.dest(outDir));
+
+    return x;
+}
+
 gulp.task('build_typescript_debug', function () {
-    var taskResult = gulp
-        .src([
+    return buildTypescript(
+        [
             'src/**/*.ts',
             'lib/typings/**/*.ts',
             '!src/**/*.spec.ts'
-        ], { base: 'src/app' })
-        .pipe(sourcemaps.init())
-        .pipe(ts({
-            sortOutput: true,
-            declarationFiles: true,
-            noExternalResolve: true,
-            out: 'app.js'
-        }));
-
-    return taskResult.js
-        .pipe(sourcemaps.write({ debug: true, includeContent: true})) // Now the sourcemaps are added to the .js file 
-        .pipe(gulp.dest('build'));
+        ],
+        "build",
+        "app.js",
+        true,
+        true);
 });
 
 gulp.task('build_typescript_with_tests', function () {
-    var taskResult = gulp
-        .src([
+     return buildTypescript(
+        [
             'src/**/*.ts',
             'lib/typings/**/*.ts',
             '!src/app/app.ts'
-        ])
-        .pipe(ts({
-            declarationFiles: true,
-            noExternalResolve: true,
-            noImplicitAny: true,
-            out: 'app_test.js'
-        }))
-        .pipe(gulp.dest('build_tests'));
-
-    return taskResult;
+        ],
+        "build_tests",
+        "app.spec.js",
+        true,
+        true);
 });
-
 
 gulp.task('debug', ['build_typescript_debug', 'deploy_html_debug', 'deploy_libs_js_debug'], function () {
 });
 
 gulp.task('run_tests', ['build_typescript_with_tests'], function () {
     return gulp
-        .src('build_tests/app_test.js')
+        .src('build_tests/app.spec.js')
         // gulp-jasmine works on filepaths so you can't have any plugins before it 
         .pipe(jasmine());
 });
