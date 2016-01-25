@@ -1,77 +1,148 @@
+///<reference path="enums.ts"/>
+///<reference path="dtos.ts"/>
 
-class GridState {
+class Grid {
     Size: number;
     Cells: number[][];
-}
 
-class TilePosition {
-    X: number;
-    Y: number;
-    constructor(x: number, y: number) {
-        this.X = x;
-        this.Y = y;
-    }
-}
-
-class Grid extends GridState {
-    constructor(size: number, savedState: GridState = null) {
-        super();
-
-        this.Size = (savedState == null)
-            ? size
-            : savedState.Size;
-
+    constructor(size: number) {
+        this.Size = size;
         this.Cells = new Array(this.Size);
-        for (var ix = 0; ix < this.Size; ix++) {
-            this.Cells[ix] = new Array(this.Size);
-
-            for (var iy = 0; iy < this.Size; iy++) {
-                this.Cells[ix][iy] = (savedState == null)
-                    ? 0
-                    : savedState.Cells[ix][iy];
+        for (var irow = 0; irow < this.Size; irow++) {
+            this.Cells[irow] = new Array(this.Size);
+            for (var icell = 0; icell < this.Size; icell++) {
+                this.Cells[irow][icell] = 0;
             }
         }
     }
 
-    InsertTile(x: number, y: number, value: number): void {
-        if (x < 0) {
-            throw "X position " + x + "is < 0";
+    Serialize(): string {
+        var result = <string[]>[];
+        for (var irow = 0; irow < this.Size; ++irow) {
+            result.push(this.Cells[irow].join(','))
         }
-
-        if (y < 0) {
-            throw "Y position " + y + "is < 0";
-        }
-
-        if (x >= this.Size) {
-            throw "X position " + x + "is more than grid size";
-        }
-
-        if (y >= this.Size) {
-            throw "Y position " + y + "is more than grid size";
-        }
-
-        if (this.Cells[x][y] != 0) {
-            throw "Cell with position " + x + ", " + y + " is occupied";
-        }
-
-        this.Cells[x][y] = value;
+        return result.join('|');
     }
 
-    RemoveTile(x: number, y: number): void {
-        this.Cells[x][y] = 0;
+    static Deserialize(state: string): Grid {
+        var grid = new Grid(1);
+        grid.InitFromState(state);
+        return grid;
+    }
+
+    protected InitFromState(state: string) {
+        var rowsData = state.split("|");
+
+        this.Size = rowsData.length;
+        this.Cells = <number[][]>[];
+        for (var irow = 0; irow < this.Size; ++irow) {
+            var row = <number[]>[];
+            this.Cells.push(row);
+            var cellsData = rowsData[irow].split(",");
+            if (cellsData.length != this.Size) {
+                throw 'Incorrect serialized grid state';
+            }
+            for (var icell = 0; icell < this.Size; ++icell) {
+                row.push(parseInt(cellsData[icell], 10));
+            }
+        }
+    }
+
+    InsertTile(irow: number, icell: number, value: number): void {
+        if (irow < 0) {
+            throw "X position " + irow + "is < 0";
+        }
+
+        if (icell < 0) {
+            throw "Y position " + icell + "is < 0";
+        }
+
+        if (irow >= this.Size) {
+            throw "X position " + irow + "is more than grid size";
+        }
+
+        if (icell >= this.Size) {
+            throw "Y position " + icell + "is more than grid size";
+        }
+
+        if (this.Cells[irow][icell] != 0) {
+            throw "Cell with position " + irow + ", " + icell + " is occupied";
+        }
+
+        this.Cells[irow][icell] = value;
+    }
+
+    RemoveTile(irow: number, icell: number): void {
+        this.Cells[irow][icell] = 0;
+    }
+    
+    RemoveTileByPos(pos: TilePosition):void{
+        this.RemoveTile(pos.RowIndex, pos.CellIndex);
+    }
+
+    GetTile(irow: number, icell: number): Tile {
+        return new Tile(irow, icell, this.Cells[irow][icell]);
+    }
+
+    UpdateTileByPos(pos: TilePosition, newValue: number){
+        this.Cells[pos.RowIndex][pos.CellIndex] = newValue;
     }
 
     AvailableCells(): TilePosition[] {
         var availPositions: Array<TilePosition> = [];
 
-        for (var ix = 0; ix < this.Size; ++ix) {
-            for (var iy = 0; iy < this.Size; ++iy) {
-                if (this.Cells[ix][iy] == 0) {
-                    availPositions.push(new TilePosition(ix, iy));
+        for (var irow = 0; irow < this.Size; ++irow) {
+            for (var icell = 0; icell < this.Size; ++icell) {
+                if (this.Cells[irow][icell] == 0) {
+                    availPositions.push(new TilePosition(irow, icell));
                 }
             }
         }
 
         return availPositions;
+    }
+
+    GetRowDataByDirection(move: Direction): Tile[][] {
+        var result = <Tile[][]>[];
+
+        switch (move) {
+            case Direction.Left:
+                for (var irow = 0; irow < this.Size; ++irow) {
+                    var row = <Tile[]>[];
+                    for (var icell = 0; icell < this.Size; ++icell) {
+                        row.push(this.GetTile(irow, icell));
+                    }
+                    result.push(row);
+                }
+                break
+            case Direction.Right:
+                for (var irow = 0; irow < this.Size; ++irow) {
+                    var row = <Tile[]>[];
+                    for (var icell = 0; icell < this.Size; ++icell) {
+                        row.push(this.GetTile(irow, this.Size - icell - 1));
+                    }
+                    result.push(row);
+                }
+                break;
+            case Direction.Up:
+                for (var icell = 0; icell < this.Size; ++icell) {
+                    var row = <Tile[]>[];
+                    for (var irow = 0; irow < this.Size; ++irow) {
+                        row.push(this.GetTile(irow, icell));
+                    }
+                    result.push(row);
+                }
+                break;
+            case Direction.Down:
+                for (var icell = 0; icell < this.Size; ++icell) {
+                    var row = <Tile[]>[];
+                    for (var irow = 0; irow < this.Size; ++irow) {
+                        row.push(this.GetTile(this.Size - irow - 1, icell));
+                    }
+                    result.push(row);
+                }
+                break;
+        }
+        return result;
     }
 }

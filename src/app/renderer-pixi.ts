@@ -36,32 +36,39 @@ class PixiGameRenderer implements IGameRenderer {
             renderer.render(this.stage);
         };
         
+        this.repaintWholeGame();
         animate();
     }
 
     Update(event: TilesUpdateEvent) {
+        this.repaintWholeGame();
+    }
+    
+    private repaintWholeGame(){
         // Remove existing tiles
         this.tiles.forEach(element => {
             this.stage.removeChild(element);
         });
         
+        var tileSize = 50;
+        
         // Add tiles from game grid
-        for (var ix = 0; ix < this.game.Grid.Size; ++ix) {
-            for (var iy = 0; iy < this.game.Grid.Size; ++iy) {
-                var tileValue =this.game.Grid.Cells[ix][iy]; 
+        for (var irow = 0; irow < this.game.Grid.Size; ++irow) {
+            for (var icell = 0; icell < this.game.Grid.Size; ++icell) {
+                var tileValue =this.game.Grid.Cells[irow][icell]; 
                 if (tileValue != 0) {
                     //Create graphics for cell
                     var graphics = new PIXI.Graphics();
                     graphics.lineStyle(1, 0xa0a0a0, 1);
                     graphics.beginFill(this.getTileColor(tileValue), 1);
-                    graphics.drawRect(0, 0, 100, 100);
+                    graphics.drawRect(0, 0, tileSize, tileSize);
                     graphics.endFill();
-                    graphics.x = 100 + ix * 100;
-                    graphics.y = 150 + iy * 100;
+                    graphics.x = tileSize + icell * tileSize;
+                    graphics.y = 150 + irow * tileSize;
                     
                     var tileText = new PIXI.Text(tileValue.toString());
-                    tileText.x = 30;
-                    tileText.y = 30;
+                    tileText.x = 20;
+                    tileText.y = 20;
                     graphics.addChild(tileText);
                     
                     this.stage.addChild(graphics);
@@ -76,25 +83,25 @@ class PixiGameRenderer implements IGameRenderer {
             case 2:
                 return 0xeee4da;
             case 4:
-                return 0xedc22e;
+                return 0xEDE0C8;
             case 8:
-                return 0xedc22e;
+                return 0xF2B179;
             case 16:
-                return 0xedc22e;
+                return 0xF59563;
             case 32:
-                return 0xedc22e;
+                return 0xF67C5F;
             case 64:
-                return 0xedc22e;
+                return 0xF65E3B;
             case 128:
-                return 0xedc22e;
+                return 0xEDCF72;
             case 256:
-                return 0xedc22e;
+                return 0xEDCC61;
             case 512:
-                return 0xedc22e;
+                return 0xEDC850;
             case 1024:
-                return 0xedc22e;
+                return 0xEDC53F;
             case 2048:
-                return 0xedc22e;
+                return 0xEDC22E;
             case 4096:
                 return 0xedc22e;
             case 8192:

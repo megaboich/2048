@@ -7,18 +7,18 @@
     game.OnTilesUpdate.RegisterObserver(render);
 
     Mousetrap.bind('up', function() {
-        game.ProcessInputAction(MoveDirection.Up);
+        game.ProcessInputAction(Direction.Up);
     });
 
     Mousetrap.bind('down', function() {
-        game.ProcessInputAction(MoveDirection.Down);
+        game.ProcessInputAction(Direction.Down);
     });
 
     Mousetrap.bind('left', function() {
-        game.ProcessInputAction(MoveDirection.Left);
+        game.ProcessInputAction(Direction.Left);
     });
 
     Mousetrap.bind('right', function() {
-        game.ProcessInputAction(MoveDirection.Right);
+        game.ProcessInputAction(Direction.Right);
     });
 })();
