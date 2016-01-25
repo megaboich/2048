@@ -15,7 +15,7 @@ class ProcessionEvent {
 class RowProcessor {
     static ProcessRow(values: number[]): ProcessionEvent[] {
         var accumulatedValue = values[0];
-        var lastCellIndexAvailableForMerge = 0;
+        var availableCellIndex = values[0] > 0 ? 1 : 0;
         var resultEvents = <ProcessionEvent[]>[];
 
         for (var ir = 1; ir < values.length; ++ir) {
@@ -27,17 +27,18 @@ class RowProcessor {
             }
 
             if (accumulatedValue != current) {
-                // Move case
-                resultEvents.push(new ProcessionEvent(ir, lastCellIndexAvailableForMerge));
+                if (ir > availableCellIndex) {
+                    // Move case
+                    resultEvents.push(new ProcessionEvent(ir, availableCellIndex));
+                }
                 accumulatedValue = current;
-                ++lastCellIndexAvailableForMerge;
+                ++availableCellIndex;
                 continue;
             }
-             
-            // Merge case
-            resultEvents.push(new ProcessionEvent(ir, lastCellIndexAvailableForMerge, current + accumulatedValue))
+
+            // Merge case (accumulatedValue != current)
+            resultEvents.push(new ProcessionEvent(ir, availableCellIndex - 1, current + accumulatedValue))
             accumulatedValue = 0;  // Don't allow all accumulations in one turn
-            ++lastCellIndexAvailableForMerge;
         }
 
         return resultEvents;

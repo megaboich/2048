@@ -18,14 +18,14 @@ describe("Row Processor tests", () => {
 
     it("Nothing moves", () => {
         var sourceData = [2, 0, 0, 0];
-        var expectedResult = [];
+        var expectedResult = <ProcessionEvent[]>[];
         var actualResult = RowProcessor.ProcessRow(sourceData);
         compare(actualResult, expectedResult);
     });
 
     it("Nothing moves 2", () => {
         var sourceData = [2, 4, 8, 16];
-        var expectedResult = [];
+        var expectedResult = <ProcessionEvent[]>[];
         var actualResult = RowProcessor.ProcessRow(sourceData);
         compare(actualResult, expectedResult);
     });
@@ -60,7 +60,7 @@ describe("Row Processor tests", () => {
 
     it("Merge with space", () => {
         var sourceData = [2, 0, 2, 0];
-        var expectedResult = [new ProcessionEvent(3, 0, 4)];
+        var expectedResult = [new ProcessionEvent(2, 0, 4)];
         var actualResult = RowProcessor.ProcessRow(sourceData);
         compare(actualResult, expectedResult);
     });
