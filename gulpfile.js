@@ -36,7 +36,7 @@ function buildTypescript(sourcesArray, outDir, outFileName, isDebug, isIncludeSo
         sortOutput: true,
         declarationFiles: true,
         noExternalResolve: true,
-        noImplicitAny: true,
+        noImplicitAny: false,
         out: outFileName
     }));
 

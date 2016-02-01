@@ -1,10 +1,10 @@
 ///<reference path="game2048.ts"/>
-///<reference path="renderer-pixi.ts"/>
+///<reference path="render/pixi-game-render.ts"/>
 
 (() => {
     var game = new Game2048(4);
-    var render = new PixiGameRenderer(document, game);
-    game.OnTilesUpdate.RegisterObserver(render);
+    var render = new PixiGameRender(document, game);
+    game.BindRender(render);
 
     Mousetrap.bind('up', function() {
         game.ProcessInputAction(Direction.Up);

@@ -33,6 +33,28 @@ class ProcessionEvent {
     }
 }
 
-class TilesUpdateEvent {
+class TileUpdateEvent {
+    Position: TilePosition;
+    constructor(position:TilePosition){
+        this.Position = position;
+    }
+}
 
+class TileMergeEvent extends TileUpdateEvent{
+    TilePosToMergeWith: TilePosition; 
+    constructor(oldPosition: TilePosition, mergePosition: TilePosition){
+        super(oldPosition);
+        this.TilePosToMergeWith = mergePosition;
+    }
+}
+
+class TileMoveEvent extends TileUpdateEvent{
+    NewPosition: TilePosition;
+    constructor(oldPosition: TilePosition, newPosition: TilePosition){
+        super(oldPosition);
+        this.NewPosition = newPosition;
+    }
+}
+
+class TileCreatedEvent extends TileUpdateEvent{
 }

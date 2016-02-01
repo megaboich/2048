@@ -3,14 +3,25 @@
 ///<reference path="grid.ts"/>
 ///<reference path="row-processor.ts"/>
 
+interface IGame2048Render {
+    OnGameFinished(): void;
+    OnTilesUpdated(event: TileUpdateEvent): void;
+}
+
 class Game2048 {
     Scores: number = 0;
     Grid: Grid;
-    OnTilesUpdate: Observable<TilesUpdateEvent> = new Observable<TilesUpdateEvent>();
+    OnTilesUpdated: Observable<TileUpdateEvent> = new Observable<TileUpdateEvent>();
+    OnGameFinished: Observable<void> = new Observable<void>();
 
     constructor(size: number) {
         this.Grid = new Grid(size);
         this.insertNewTileToVacantSpace();
+    }
+
+    BindRender(render: IGame2048Render) {
+        this.OnTilesUpdated.RegisterObserver(render.OnTilesUpdated.bind(render));
+        this.OnGameFinished.RegisterObserver(render.OnGameFinished.bind(render));
     }
 
     ProcessInputAction(move: Direction) {
@@ -21,36 +32,40 @@ class Game2048 {
             //apply row events to game grid and publish them to subscribers
             for (var ie = 0; ie < rowEvents.length; ++ie) {
                 var rowEvent = rowEvents[ie];
-                if (rowEvent.IsMerged){
+                var oldPos = rowsData[i][rowEvent.OldIndex];
+                var newPos = rowsData[i][rowEvent.NewIndex];
+                if (rowEvent.IsMerged) {
                     this.Scores += rowEvent.MergedValue;
                     this.Grid.UpdateTileByPos(rowsData[i][rowEvent.NewIndex], rowEvent.MergedValue);
-                    
-                    // Fire tile merged event
-                    // TODO: 
-                } else{
-                    this.Grid.UpdateTileByPos(rowsData[i][rowEvent.NewIndex], rowEvent.OldValue);
-                    
-                    // Fire tile moved event
-                    // TODO:
+                    this.OnTilesUpdated.NotifyObservers(new TileMergeEvent(oldPos, newPos));
+                } else {
+                    this.Grid.UpdateTileByPos(newPos, rowEvent.OldValue);
+                    this.OnTilesUpdated.NotifyObservers(new TileMoveEvent(oldPos, newPos));
                 }
-                this.Grid.RemoveTileByPos(rowsData[i][rowEvent.OldIndex]);
+
+                this.Grid.RemoveTileByPos(oldPos);
             }
         }
 
-        this.insertNewTileToVacantSpace();
-        
-        // Fire new tile appeared event
-        // TODO:
-        var event = new TilesUpdateEvent();
-        this.OnTilesUpdate.NotifyObservers(event);
+        var newTile = this.insertNewTileToVacantSpace();
+        if (newTile != null) {
+            this.OnTilesUpdated.NotifyObservers(new TileCreatedEvent(newTile));
+        }
+        else {
+            this.OnGameFinished.NotifyObservers(null);
+        }
     }
 
-    private insertNewTileToVacantSpace(): void {
+    private insertNewTileToVacantSpace(): Tile {
         var availTitles = this.Grid.AvailableCells();
         if (availTitles.length > 0) {
             var ti = Random.GetRandomInt(0, availTitles.length);
             var pos = availTitles[ti];
-            this.Grid.InsertTile(pos.RowIndex, pos.CellIndex, 2);
+            var tile = new Tile(pos.RowIndex, pos.CellIndex, 2);
+            this.Grid.InsertTile(tile);
+            return tile;
         }
+
+        return null;
     }
 }
