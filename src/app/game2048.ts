@@ -49,7 +49,7 @@ class Game2048 {
 
         var newTile = this.insertNewTileToVacantSpace();
         if (newTile != null) {
-            this.OnTilesUpdated.NotifyObservers(new TileCreatedEvent(newTile));
+            this.OnTilesUpdated.NotifyObservers(new TileCreatedEvent(newTile, newTile.Value));
         }
         else {
             this.OnGameFinished.NotifyObservers(null);

@@ -1,5 +1,6 @@
 ///<reference path="..\..\..\lib\typings\tsd.d.ts"/>
 ///<reference path="pixi-animation.ts"/>
+///<reference path="pixi-animation-move.ts"/>
 ///<reference path="..\game2048.ts"/>
 ///<reference path="..\helpers\dictionary.ts"/>
 
@@ -11,12 +12,13 @@ class PixiGameRender implements IGame2048Render {
     private staticRoot: PIXI.Container = null;
     private game: Game2048;
     private animationsManager: PixiAnimationsManager;
-    private flipper = false;
+    private flipper: boolean = false;
+    private tileSize: number = 50;
 
     constructor(document: Document, game: Game2048) {
         this.game = game;
 
-        var renderer = PIXI.autoDetectRenderer(800, 600, { backgroundColor: 0xeFeFeF });
+        var renderer = PIXI.autoDetectRenderer(400, 600, { backgroundColor: 0xeFeFeF });
         document.body.appendChild(renderer.view);
         
         // create the root of the scene graph
@@ -24,8 +26,7 @@ class PixiGameRender implements IGame2048Render {
         this.rebuildStaticObjects();
         this.rebuildDynamicObjects();
 
-        this.animationsManager = new PixiAnimationsManager();
-        this.animationsManager.OnAnimationComplete.RegisterObserver(this.onAnimationsCompleted.bind(this));
+        this.animationsManager = new PixiAnimationsManager(this.onAnimationsCompleted.bind(this));
 
         var ticker = new PIXI.ticker.Ticker();
         ticker.add(() => {
@@ -33,8 +34,7 @@ class PixiGameRender implements IGame2048Render {
 
             renderer.render(this.stage);
 
-            this.scoresText.rotation += 0.01;
-            this.fpsText.text = ticker.FPS.toString();
+            this.fpsText.text = ticker.FPS.toFixed(2);
         });
         ticker.start();
     }
@@ -47,25 +47,50 @@ class PixiGameRender implements IGame2048Render {
     }
 
     OnTilesUpdated(event: TileUpdateEvent) {
-        
         if (event instanceof TileMoveEvent) {
             var moveEvent = <TileMoveEvent>event;
             var tile = this.tiles.Get(this.getTileKey(moveEvent.Position));
             var newPos = <EntityPosition>{};
             this.setTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
-            this.animationsManager.AddAnimation(new PixiAnimation(tile, newPos, 200));
-        } else if (event instanceof TileCreatedEvent) {
-
+            this.animationsManager.AddAnimation(new PixiAnimationMove(tile, 150, newPos));
+            
         } else if (event instanceof TileMergeEvent) {
             var mergeEvent = <TileMergeEvent>event;
             var tile = this.tiles.Get(this.getTileKey(mergeEvent.Position));
             var newPos = <EntityPosition>{};
             this.setTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
-            this.animationsManager.AddAnimation(new PixiAnimation(tile, newPos, 200));
+            this.animationsManager.AddAnimation(new PixiAnimationMove(tile, 150, newPos));
+            
+        } else if (event instanceof TileCreatedEvent) {
+            this.flipper = !this.flipper;
+            this.animationsManager.AddAnimation(new PixiAnimationParallel([
+                new PixiAnimationRotate(this.scoresText, 500, 2 * Math.PI),
+                new PixiAnimationMove(this.scoresText, 500, { x: this.flipper ? 300 : 100, y: 40 }),
+                new PixiAnimationQueue([
+                    new PixiAnimationScale(this.scoresText, 250, 2),
+                    new PixiAnimationScale(this.scoresText, 250, 1)
+                ])
+            ]));
+
+            var createdEvent = <TileCreatedEvent>event;
+            var newTile = this.addTileGraphics(createdEvent.Position.RowIndex, createdEvent.Position.CellIndex, createdEvent.TileValue);
+            newTile.alpha = 0;
+            newTile.scale = new PIXI.Point(0.1, 0.1);
+            newTile.x += (this.tileSize / 2);
+            newTile.y += (this.tileSize / 2);
+            this.animationsManager.AddAnimation(new PixiAnimationQueue([
+                new PixiAnimationDelay(200),
+                new PixiAnimationFade(newTile, 1, 1),
+                new PixiAnimationParallel([
+                    new PixiAnimationScale(newTile, 150, 1),
+                    new PixiAnimationMove(newTile, 150, { x: newTile.x - (this.tileSize / 2), y: newTile.y - (this.tileSize / 2) }),
+                ])
+            ]));
         }
     }
 
-    private onAnimationsCompleted(event: AnimationsCompletedEvent) {
+    private onAnimationsCompleted() {
+        console.log('Animations completed!!')
         this.rebuildDynamicObjects();
     }
 
@@ -84,12 +109,12 @@ class PixiGameRender implements IGame2048Render {
 
         var style = <PIXI.TextStyle>{
             font: 'Inconsolata, Courier New',
-            fill: '#00FF21',
-            lineHeight: 12,
+            fill: '#005521',
+            lineHeight: 14,
         };
 
         this.fpsText = new PIXI.Text("", style);
-        this.fpsText.x = 700;
+        this.fpsText.x = 300;
         this.fpsText.y = 8;
         this.staticRoot.addChild(this.fpsText);
     }
@@ -103,32 +128,38 @@ class PixiGameRender implements IGame2048Render {
             this.stage.removeChild(element);
         });
         this.tiles = new Dictionary<string, PIXI.DisplayObject>([]);
-        var tileSize = 50;
+        
        
         // Add tiles from game grid
         for (var irow = 0; irow < this.game.Grid.Size; ++irow) {
             for (var icell = 0; icell < this.game.Grid.Size; ++icell) {
                 var tileValue = this.game.Grid.Cells[irow][icell];
                 if (tileValue != 0) {
-                    //Create graphics for cell
-                    var graphics = new PIXI.Graphics();
-                    graphics.lineStyle(1, 0xa0a0a0, 1);
-                    graphics.beginFill(this.getTileColor(tileValue), 1);
-                    graphics.drawRect(0, 0, tileSize, tileSize);
-                    graphics.endFill();
-
-                    this.setTileCoordinates(graphics, irow, icell);
-
-                    var tileText = new PIXI.Text(tileValue.toString());
-                    tileText.x = 20;
-                    tileText.y = 20;
-                    graphics.addChild(tileText);
-
-                    this.stage.addChild(graphics);
-                    this.tiles.Add(irow.toString() + "_" + icell.toString(), graphics);
+                    this.addTileGraphics(irow, icell, tileValue);
                 }
             }
         }
+    }
+
+    private addTileGraphics(irow: number, icell: number, tileValue: number): PIXI.DisplayObject {
+        var tileSize = 50;
+        //Create graphics for cell
+        var graphics = new PIXI.Graphics();
+        graphics.lineStyle(1, 0xa0a0a0, 1);
+        graphics.beginFill(this.getTileColor(tileValue), 1);
+        graphics.drawRect(0, 0, tileSize, tileSize);
+        graphics.endFill();
+
+        this.setTileCoordinates(graphics, irow, icell);
+
+        var tileText = new PIXI.Text(tileValue.toString());
+        tileText.x = 20;
+        tileText.y = 20;
+        graphics.addChild(tileText);
+
+        this.stage.addChild(graphics);
+        this.tiles.Add(irow.toString() + "_" + icell.toString(), graphics);
+        return graphics;
     }
 
     private setTileCoordinates(fig: EntityPosition, iRow: number, iCell: number) {

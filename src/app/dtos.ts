@@ -57,4 +57,9 @@ class TileMoveEvent extends TileUpdateEvent{
 }
 
 class TileCreatedEvent extends TileUpdateEvent{
+    TileValue: number;
+    constructor(position: TilePosition, tileValue: number){
+        super(position);
+        this.TileValue = tileValue;
+    }
 }

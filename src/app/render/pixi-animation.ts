@@ -1,73 +1,35 @@
 ///<reference path="..\..\..\lib\typings\tsd.d.ts"/>
+///<reference path="pixi-animation-combined.ts"/>
 
-interface EntityPosition {
-    x: number;
-    y: number;
+interface IPixiAnimation {
+    Update(elapsedMs: number): void;
+    IsCompleted: boolean;
+    OnCompleted: () => void;
 }
 
-class PixiAnimation {
+class PixiAnimationBase {
     Entity: PIXI.DisplayObject;
-    TargetPosition: EntityPosition;
     IsCompleted: boolean;
-    private durationRemains: number;
+    protected durationRemains: number;
+    OnCompleted: () => void;
 
-    constructor(entity: PIXI.DisplayObject, newPosition: EntityPosition, durationInMs: number) {
+    constructor(entity: PIXI.DisplayObject, durationInMs: number, onCompleted: () => void) {
+        if (entity == null){
+            throw 'Entity is null';
+        }
         this.Entity = entity;
-        this.TargetPosition = newPosition;
+        this.OnCompleted = onCompleted;
         this.durationRemains = durationInMs;
         this.IsCompleted = false;
     }
-
-    Update(elapsedMs: number): void {
-        if (this.durationRemains > elapsedMs) {
-            // Calculate dx and dy
-            var dx = (elapsedMs * (this.TargetPosition.x - this.Entity.x)) / this.durationRemains;
-            var dy = (elapsedMs * (this.TargetPosition.y - this.Entity.y)) / this.durationRemains;
-            this.Entity.x += dx;
-            this.Entity.y += dy;
-            this.durationRemains -= elapsedMs;
-        } else {
-            // Here is final call
-            this.Entity.x = this.TargetPosition.x;
-            this.Entity.y = this.TargetPosition.y;
-            this.IsCompleted = true;
-            this.durationRemains = 0;
-        }
-    }
 }
 
-class AnimationsCompletedEvent {
-
-}
-
-class PixiAnimationsManager {
-    Animations: PixiAnimation[] = [];
-    OnAnimationComplete: Observable<AnimationsCompletedEvent> = new Observable<AnimationsCompletedEvent>();
-    private hasAnimations: boolean = false;
-    private animCompletedEvent: AnimationsCompletedEvent = new AnimationsCompletedEvent();
-
-    constructor() {
+class PixiAnimationsManager extends PixiAnimationParallel {
+    constructor(onCompleted: () => void = null) {
+        super([], onCompleted);
     }
 
-    AddAnimation(animation: PixiAnimation): void {
+    AddAnimation(animation: IPixiAnimation): void {
         this.Animations.push(animation);
-        this.hasAnimations = true;
-    }
-
-    Update(elapsedMs: number): void {
-        if (this.Animations.length == 0) {
-            if (this.hasAnimations) {
-                this.OnAnimationComplete.NotifyObservers(this.animCompletedEvent);
-                this.hasAnimations = false;
-            }
-            return;
-        }
-
-        var processedAnimations = this.Animations.filter((animation: PixiAnimation) => {
-            animation.Update(elapsedMs);
-            return !animation.IsCompleted;
-        });
-
-        this.Animations = processedAnimations;
     }
 }
