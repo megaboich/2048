@@ -32,9 +32,6 @@ class PixiAnimationParallel implements IPixiAnimation {
         completedEvents.forEach(e => e());
 
         if (this.Animations.length == 0) {
-            if (this.OnCompleted != null) {
-                this.OnCompleted();
-            }
             this.IsCompleted = true;
         }
     }
@@ -67,9 +64,6 @@ class PixiAnimationQueue implements IPixiAnimation {
         }
 
         if (this.Animations.length == 0) {
-            if (this.OnCompleted != null) {
-                this.OnCompleted();
-            }
             this.IsCompleted = true;
         }
     }

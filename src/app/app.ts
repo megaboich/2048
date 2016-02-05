@@ -7,18 +7,18 @@
     game.BindRender(render);
 
     Mousetrap.bind('up', function() {
-        game.ProcessInputAction(Direction.Up);
+        game.Action(Direction.Up);
     });
 
     Mousetrap.bind('down', function() {
-        game.ProcessInputAction(Direction.Down);
+        game.Action(Direction.Down);
     });
 
     Mousetrap.bind('left', function() {
-        game.ProcessInputAction(Direction.Left);
+        game.Action(Direction.Left);
     });
 
     Mousetrap.bind('right', function() {
-        game.ProcessInputAction(Direction.Right);
+        game.Action(Direction.Right);
     });
 })();

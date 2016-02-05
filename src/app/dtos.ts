@@ -10,7 +10,7 @@ class TilePosition {
 
 class Tile extends TilePosition {
     Value: number;
-    
+
     constructor(row: number, cell: number, value: number) {
         super(row, cell);
         this.Value = value;
@@ -35,30 +35,34 @@ class ProcessionEvent {
 
 class TileUpdateEvent {
     Position: TilePosition;
-    constructor(position:TilePosition){
+    constructor(position: TilePosition) {
         this.Position = position;
     }
 }
 
-class TileMergeEvent extends TileUpdateEvent{
-    TilePosToMergeWith: TilePosition; 
-    constructor(oldPosition: TilePosition, mergePosition: TilePosition){
+class TileMergeEvent extends TileUpdateEvent {
+    TilePosToMergeWith: TilePosition;
+    NewValue: number;
+    constructor(oldPosition: TilePosition, mergePosition: TilePosition, newValue: number) {
         super(oldPosition);
         this.TilePosToMergeWith = mergePosition;
+        this.NewValue = newValue;
     }
 }
 
-class TileMoveEvent extends TileUpdateEvent{
+class TileMoveEvent extends TileUpdateEvent {
     NewPosition: TilePosition;
-    constructor(oldPosition: TilePosition, newPosition: TilePosition){
+    Value: number;
+    constructor(oldPosition: TilePosition, newPosition: TilePosition, value: number) {
         super(oldPosition);
         this.NewPosition = newPosition;
+        this.Value = value;
     }
 }
 
-class TileCreatedEvent extends TileUpdateEvent{
+class TileCreatedEvent extends TileUpdateEvent {
     TileValue: number;
-    constructor(position: TilePosition, tileValue: number){
+    constructor(position: TilePosition, tileValue: number) {
         super(position);
         this.TileValue = tileValue;
     }

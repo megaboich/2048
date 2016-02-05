@@ -49,6 +49,10 @@ class Dictionary<TKey, TValue> implements IDictionary<TKey, TValue> {
     }
 
     Get(key: TKey): TValue {
-        return <TValue>this[key.toString()];
+        var val = this[key.toString()];
+        if (val !== undefined) {
+            return <TValue>val;
+        }
+        throw 'Key ' + key + ' is not found in dictionary';
     }
 }

@@ -6,6 +6,7 @@
 interface IGame2048Render {
     OnGameFinished(): void;
     OnTilesUpdated(event: TileUpdateEvent): void;
+    OnTurnAnimationsCompleted: Observable<void>;
 }
 
 class Game2048 {
@@ -13,6 +14,7 @@ class Game2048 {
     Grid: Grid;
     OnTilesUpdated: Observable<TileUpdateEvent> = new Observable<TileUpdateEvent>();
     OnGameFinished: Observable<void> = new Observable<void>();
+    private inputActions: (() => void)[] = [];
 
     constructor(size: number) {
         this.Grid = new Grid(size);
@@ -22,9 +24,21 @@ class Game2048 {
     BindRender(render: IGame2048Render) {
         this.OnTilesUpdated.RegisterObserver(render.OnTilesUpdated.bind(render));
         this.OnGameFinished.RegisterObserver(render.OnGameFinished.bind(render));
+
+        render.OnTurnAnimationsCompleted.RegisterObserver(this.onTurnAnimationsCompleted.bind(this));
     }
 
-    ProcessInputAction(move: Direction) {
+    Action(move: Direction) {
+        var action = this.processAction.bind(this, move);
+        this.inputActions.push(action);
+        if (this.inputActions.length == 1) {
+            action();
+        }
+    }
+
+    private processAction(move: Direction) {
+        CommonTools.ConsoleLog("process action", [this.Grid.Serialize(), move.toString()])
+        
         var rowsData = this.Grid.GetRowDataByDirection(move);
         for (var i = 0; i < rowsData.length; ++i) {
             var rowEvents = RowProcessor.ProcessRow(rowsData[i]);
@@ -37,10 +51,10 @@ class Game2048 {
                 if (rowEvent.IsMerged) {
                     this.Scores += rowEvent.MergedValue;
                     this.Grid.UpdateTileByPos(rowsData[i][rowEvent.NewIndex], rowEvent.MergedValue);
-                    this.OnTilesUpdated.NotifyObservers(new TileMergeEvent(oldPos, newPos));
+                    this.OnTilesUpdated.NotifyObservers(new TileMergeEvent(oldPos, newPos, rowEvent.MergedValue));
                 } else {
                     this.Grid.UpdateTileByPos(newPos, rowEvent.OldValue);
-                    this.OnTilesUpdated.NotifyObservers(new TileMoveEvent(oldPos, newPos));
+                    this.OnTilesUpdated.NotifyObservers(new TileMoveEvent(oldPos, newPos, rowEvent.OldValue));
                 }
 
                 this.Grid.RemoveTileByPos(oldPos);
@@ -53,6 +67,16 @@ class Game2048 {
         }
         else {
             this.OnGameFinished.NotifyObservers(null);
+        }
+    }
+
+    private onTurnAnimationsCompleted() {
+        var action = this.inputActions[0];
+        this.inputActions.splice(0, 1);
+
+        if (this.inputActions.length > 0) {
+            action = this.inputActions[0];
+            action();
         }
     }
 

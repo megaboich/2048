@@ -14,7 +14,7 @@ class PixiAnimationBase {
     OnCompleted: () => void;
 
     constructor(entity: PIXI.DisplayObject, durationInMs: number, onCompleted: () => void) {
-        if (entity == null){
+        if (entity == null) {
             throw 'Entity is null';
         }
         this.Entity = entity;
@@ -31,5 +31,17 @@ class PixiAnimationsManager extends PixiAnimationParallel {
 
     AddAnimation(animation: IPixiAnimation): void {
         this.Animations.push(animation);
+    }
+
+    Update(elapsedMs: number): void {
+        var hasAnimations = (this.Animations.length > 0);
+
+        super.Update(elapsedMs);
+
+        if (hasAnimations && (this.Animations.length == 0)) {
+            if (this.OnCompleted != null) {
+                this.OnCompleted();
+            }
+        }
     }
 }
