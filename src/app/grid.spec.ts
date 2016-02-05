@@ -9,10 +9,10 @@ describe('Grid state', () => {
 
     it("Filled grid serializaion", () => {
         var g = new Grid(2);
-        g.InsertTile(0, 0, 1);
-        g.InsertTile(0, 1, 2);
-        g.InsertTile(1, 0, 3);
-        g.InsertTile(1, 1, 4);
+        g.InsertTileByPos(0, 0, 1);
+        g.InsertTileByPos(0, 1, 2);
+        g.InsertTileByPos(1, 0, 3);
+        g.InsertTileByPos(1, 1, 4);
         expect(g.Serialize()).toBe('1,2|3,4');
     });
 
@@ -37,41 +37,41 @@ describe("Grid insert tests", () => {
 
     it("Grid available cells", () => {
         var g = new Grid(2);
-        g.InsertTile(0, 0, 2);
+        g.InsertTileByPos(0, 0, 2);
         expect(g.AvailableCells().length).toBe(3);
-        g.InsertTile(0, 1, 2);
+        g.InsertTileByPos(0, 1, 2);
         expect(g.AvailableCells().length).toBe(2);
-        g.InsertTile(1, 0, 2);
+        g.InsertTileByPos(1, 0, 2);
         expect(g.AvailableCells().length).toBe(1);
-        g.InsertTile(1, 1, 2);
+        g.InsertTileByPos(1, 1, 2);
         expect(g.AvailableCells().length).toBe(0);
     });
 
     it("Grid insert wrong dimension", () => {
         var g = new Grid(3);
         expect(() => {
-            g.InsertTile(-1, 0, 2);
+            g.InsertTileByPos(-1, 0, 2);
         }).toThrow();
 
         expect(() => {
-            g.InsertTile(1, -1, 2);
+            g.InsertTileByPos(1, -1, 2);
         }).toThrow();
 
         expect(() => {
-            g.InsertTile(3, 1, 2);
+            g.InsertTileByPos(3, 1, 2);
         }).toThrow();
 
         expect(() => {
-            g.InsertTile(1, 3, 2);
+            g.InsertTileByPos(1, 3, 2);
         }).toThrow();
     });
 
     it("Grid insert occupied", () => {
         var g = new Grid(3);
-        g.InsertTile(0, 0, 2);
+        g.InsertTileByPos(0, 0, 2);
 
         expect(() => {
-            g.InsertTile(0, 0, 2);
+            g.InsertTileByPos(0, 0, 2);
         }).toThrow();
     });
 });
