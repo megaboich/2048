@@ -1,5 +1,5 @@
 // Helper static class for working with random
-class Random {
+class RandomHelper {
     // Returns a random integer between min (included) and max (included)
     // Using Math.round() will give you a non-uniform distribution!
     static GetRandomIntInclusive(min: number, max: number): number {
@@ -11,12 +11,22 @@ class Random {
     static GetRandomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min)) + min;
     }
-    
-    
+
+
     static GetRandColor(): number {
         var r = this.GetRandomInt(120, 255);
         var g = this.GetRandomInt(120, 255);
         var b = this.GetRandomInt(120, 255);
         return b + 256 * g + 256 * 256 * r;
+    }
+}
+
+interface IRandom {
+    GetRandomNumber(max: number): number;
+}
+
+class DefaultRandom implements IRandom {
+    GetRandomNumber(max: number): number {
+        return RandomHelper.GetRandomInt(0, max);
     }
 }

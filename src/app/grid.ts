@@ -48,11 +48,11 @@ class Grid {
         }
     }
 
-    InsertTile(tile: Tile): void {
-        this.InsertTileByPos(tile.RowIndex, tile.CellIndex, tile.Value);
+    InsertTileByPos(pos: TilePosition, value: number): void {
+        this.InsertTile(pos.RowIndex, pos.CellIndex, value);
     }
 
-    InsertTileByPos(irow: number, icell: number, value: number): void {
+    InsertTile(irow: number, icell: number, value: number): void {
         if (irow < 0) {
             throw "X position " + irow + "is < 0";
         }

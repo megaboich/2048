@@ -1,8 +1,9 @@
 ///<reference path="..\..\..\lib\typings\tsd.d.ts"/>
-///<reference path="pixi-animation.ts"/>
+///<reference path="..\helpers\dictionary.ts"/>
+
+///<reference path="pixi-animation-manager.ts"/>
 ///<reference path="pixi-animation-move.ts"/>
 ///<reference path="..\game2048.ts"/>
-///<reference path="..\helpers\dictionary.ts"/>
 
 class TileGraphics extends PIXI.Graphics {
     TileKey: string;

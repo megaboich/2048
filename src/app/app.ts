@@ -2,7 +2,7 @@
 ///<reference path="render/pixi-game-render.ts"/>
 
 (() => {
-    var game = new Game2048(4);
+    var game = new Game2048(4, new DefaultRandom());
     var render = new PixiGameRender(document, game);
     game.BindRender(render);
 

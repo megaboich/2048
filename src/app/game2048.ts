@@ -15,8 +15,10 @@ class Game2048 {
     OnTilesUpdated: Observable<TileUpdateEvent> = new Observable<TileUpdateEvent>();
     OnGameFinished: Observable<void> = new Observable<void>();
     private inputActions: (() => void)[] = [];
+    private rand: IRandom;
 
-    constructor(size: number) {
+    constructor(size: number, rand: IRandom) {
+        this.rand = rand;
         this.Grid = new Grid(size);
         this.insertNewTileToVacantSpace();
     }
@@ -83,10 +85,10 @@ class Game2048 {
     private insertNewTileToVacantSpace(): Tile {
         var availTitles = this.Grid.AvailableCells();
         if (availTitles.length > 0) {
-            var ti = Random.GetRandomInt(0, availTitles.length);
+            var ti = this.rand.GetRandomNumber(availTitles.length);
             var pos = availTitles[ti];
             var tile = new Tile(pos.RowIndex, pos.CellIndex, 2);
-            this.Grid.InsertTile(tile);
+            this.Grid.InsertTileByPos(tile, tile.Value);
             return tile;
         }
 
