@@ -5,10 +5,10 @@
 			"name": "Launch",
 			"type": "node",
 			"request": "launch",
-			"program": "app.js",
-			"stopOnEntry": false,
+			"program": "${workspaceRoot}/build_tests/app.spec.js",
+			"stopOnEntry": true,
 			"args": [],
-			"cwd": ".",
+			"cwd": "${workspaceRoot}",
 			"runtimeExecutable": null,
 			"runtimeArgs": [
 				"--nolazy"
@@ -17,8 +17,7 @@
 				"NODE_ENV": "development"
 			},
 			"externalConsole": false,
-			"sourceMaps": false,
-			"outDir": null
+			"sourceMaps": true
 		},
 		{
 			"name": "Attach",

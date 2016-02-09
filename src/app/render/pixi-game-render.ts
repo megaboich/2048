@@ -55,56 +55,45 @@ class PixiGameRender implements IGame2048Render {
 
     OnTilesUpdated(event: TileUpdateEvent) {
         if (event instanceof TileMoveEvent) {
+            console.log(`move from ${event.Position} to ${event.NewPosition}, value ${event.Value}, del:${event.ShouldBeDeleted}`);
 
             var moveEvent = <TileMoveEvent>event;
             var tileToMove = this.tiles.Get(this.getTileKey(moveEvent.Position));
-            if (!tileToMove) {
-                console.log('%cmove - tile to move fucked up', 'font-weight:bold;');
-                return;
-            }
+            this.unregisterTile(tileToMove);
             this.bringToFront(tileToMove);
             var newPos = <EntityPosition>{};
             this.setTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
+            
             this.animationsManager.AddAnimation(new PixiAnimationMove(tileToMove, 150, newPos, () => {
                 this.removeTileGraphics(tileToMove);
-                this.addTileGraphics(moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex, moveEvent.Value);
+                if (!moveEvent.ShouldBeDeleted) {
+                    var newTile = this.addTileGraphics(moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex, moveEvent.Value);
+                    this.registerTile(newTile);
+                } else {
+                    this.removeTileGraphics(tileToMove);
+                    
+                }
             }));
 
         } else if (event instanceof TileMergeEvent) {
 
             var mergeEvent = <TileMergeEvent>event;
             var tileToMove = this.tiles.Get(this.getTileKey(mergeEvent.Position));
-            if (!tileToMove) {
-                console.log('%cmerge - tile to move fucked up', 'font-weight:bold;');
-                return;
-            }
+            this.unregisterTile(tileToMove);
             this.bringToFront(tileToMove);
-            var tileToRemove = this.tiles.Get(this.getTileKey(mergeEvent.TilePosToMergeWith));
-            if (!tileToRemove) {
-                console.log('tile to move fucked up');
-                return;
-            }
             var newPos = <EntityPosition>{};
             this.setTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
-            this.animationsManager.AddAnimation(new PixiAnimationParallel([
-                new PixiAnimationScale(tileToRemove, 150, 0.2),
-                new PixiAnimationMove(tileToMove, 150, newPos),
-            ]));
-            /*, () => {
-                this.removeTileGraphics(tileToRemove);
-                this.removeTileGraphics(tileToMove);
-                var newTile = this.addTileGraphics(mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex, mergeEvent.NewValue);
-            }));
-            /*
-            , () => {
-                this.removeTileGraphics(tileToRemove);
-                this.removeTileGraphics(tileToMove);
-                var newTile = this.addTileGraphics(mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex, mergeEvent.NewValue);
-                this.animationsManager.AddAnimation(new PixiAnimationQueue([
-                    new PixiAnimationScale(newTile, 50, 1.3),
-                    new PixiAnimationScale(newTile, 100, 1),
-                ]));
-            }));*/
+            
+            this.animationsManager.AddAnimation(
+                new PixiAnimationMove(tileToMove, 150, newPos, () => {
+                    this.removeTileGraphics(tileToMove);
+                    var newTile = this.addTileGraphics(mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex, mergeEvent.NewValue);
+                    this.registerTile(newTile);
+                    this.animationsManager.AddAnimation(new PixiAnimationQueue([
+                        new PixiAnimationScale(newTile, 50, 1.3),
+                        new PixiAnimationScale(newTile, 100, 1),
+                    ]));
+                }));
 
         } else if (event instanceof TileCreatedEvent) {
             this.flipper = !this.flipper;
@@ -119,6 +108,7 @@ class PixiGameRender implements IGame2048Render {
 
             var createdEvent = <TileCreatedEvent>event;
             var newTile = this.addTileGraphics(createdEvent.Position.RowIndex, createdEvent.Position.CellIndex, createdEvent.TileValue);
+            this.registerTile(newTile);
             newTile.alpha = 0;
             newTile.scale = new PIXI.Point(0.1, 0.1);
             newTile.x += (this.tileSize / 2);
@@ -136,8 +126,9 @@ class PixiGameRender implements IGame2048Render {
     }
 
     private onAnimationsCompleted() {
-        console.log('Animations completed!!')
-        this.rebuildDynamicObjects();
+        console.log('Animations completed!!');
+
+        //this.rebuildDynamicObjects();
         this.OnTurnAnimationsCompleted.NotifyObservers(null);
     }
 
@@ -183,40 +174,47 @@ class PixiGameRender implements IGame2048Render {
 
         this.tiles = new Dictionary<string, TileGraphics>([]);
         
-       
         // Add tiles from game grid
         for (var irow = 0; irow < this.game.Grid.Size; ++irow) {
             for (var icell = 0; icell < this.game.Grid.Size; ++icell) {
                 var tileValue = this.game.Grid.Cells[irow][icell];
                 if (tileValue != 0) {
-                    this.addTileGraphics(irow, icell, tileValue);
+                    var tile = this.addTileGraphics(irow, icell, tileValue);
+                    this.registerTile(tile);
                 }
             }
         }
     }
 
-    private removeTileGraphics(tile: TileGraphics) {
+    private registerTile(tile: TileGraphics):void{
+        this.tiles.Add(tile.TileKey, tile);
+    }
+    
+    private unregisterTile(tile: TileGraphics):void{
         var key = tile.TileKey;
         this.tiles.Remove(key);
-        console.log('removed ' + key);
+        console.log('unregistered ' + key);
+    }
+
+    private removeTileGraphics(tile: TileGraphics) {
         if (!tile.parent) {
-            console.log('tile parent fucked up');
+            console.log('tile parent is null');
             return;
         }
         tile.parent.removeChild(tile);
     }
 
-    private addTileGraphics(irow: number, icell: number, tileValue: number): PIXI.DisplayObject {
+    private addTileGraphics(irow: number, icell: number, tileValue: number): TileGraphics {
         var tileSize = 50;
         //Create graphics for cell
         var graphics = new TileGraphics();
         graphics.TileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
         /*
-        graphics.lineStyle(1, 0xa0a0a0, 1);
-        graphics.beginFill(this.getTileColor(tileValue), 1);
-        graphics.drawRect(0, 0, tileSize, tileSize);
-        graphics.endFill();
-*/
+                graphics.lineStyle(1, 0xa0a0a0, 1);
+                graphics.beginFill(this.getTileColor(tileValue), 1);
+                graphics.drawRect(0, 0, tileSize, tileSize);
+                graphics.endFill();
+        */
         this.setTileCoordinates(graphics, irow, icell);
 
         var style = <PIXI.TextStyle>{
@@ -230,7 +228,6 @@ class PixiGameRender implements IGame2048Render {
         graphics.addChild(tileText);
 
         this.stage.addChild(graphics);
-        this.tiles.Add(graphics.TileKey, graphics);
         return graphics;
     }
 

@@ -19,6 +19,10 @@ class Dictionary<TKey, TValue> implements IDictionary<TKey, TValue> {
     }
 
     Add(key: TKey, value: TValue): void {
+        if (this[key.toString()] !== undefined) {
+            throw `Item with key ${key} has been already added to dictionary`;
+        }
+
         this[key.toString()] = value;
         this._keys.push(key);
         this._values.push(value);
@@ -53,6 +57,6 @@ class Dictionary<TKey, TValue> implements IDictionary<TKey, TValue> {
         if (val !== undefined) {
             return <TValue>val;
         }
-        throw 'Key ' + key + ' is not found in dictionary';
+        throw `Key ${key} is not found in dictionary`;
     }
 }

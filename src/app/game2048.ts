@@ -39,7 +39,7 @@ class Game2048 {
     }
 
     private processAction(move: Direction) {
-        CommonTools.ConsoleLog("process action", [this.Grid.Serialize(), move.toString()])
+        CommonTools.ConsoleLog("start process action", [this.Grid.Serialize(), Direction[move]]);
         
         var rowsData = this.Grid.GetRowDataByDirection(move);
         for (var i = 0; i < rowsData.length; ++i) {
@@ -50,13 +50,13 @@ class Game2048 {
                 var rowEvent = rowEvents[ie];
                 var oldPos = rowsData[i][rowEvent.OldIndex];
                 var newPos = rowsData[i][rowEvent.NewIndex];
-                if (rowEvent.IsMerged) {
+                if (rowEvent.IsMerged()) {
                     this.Scores += rowEvent.MergedValue;
                     this.Grid.UpdateTileByPos(rowsData[i][rowEvent.NewIndex], rowEvent.MergedValue);
                     this.OnTilesUpdated.NotifyObservers(new TileMergeEvent(oldPos, newPos, rowEvent.MergedValue));
                 } else {
-                    this.Grid.UpdateTileByPos(newPos, rowEvent.OldValue);
-                    this.OnTilesUpdated.NotifyObservers(new TileMoveEvent(oldPos, newPos, rowEvent.OldValue));
+                    this.Grid.UpdateTileByPos(newPos, rowEvent.Value);
+                    this.OnTilesUpdated.NotifyObservers(new TileMoveEvent(oldPos, newPos, rowEvent.Value, rowEvent.IsDeleted()));
                 }
 
                 this.Grid.RemoveTileByPos(oldPos);
@@ -70,6 +70,8 @@ class Game2048 {
         else {
             this.OnGameFinished.NotifyObservers(null);
         }
+        
+        CommonTools.ConsoleLog("  end process action", [this.Grid.Serialize()])
     }
 
     private onTurnAnimationsCompleted() {

@@ -2,7 +2,7 @@
 
 ///<reference path="dtos.ts"/>
     
-function compareProcessionEvents(actual: ProcessionEvent[], expected: ProcessionEvent[]): void {
+function compareProcessionEvents(actual: RowProcessionEvent[], expected: RowProcessionEvent[]): void {
     expect(actual.length).toEqual(expected.length, "Length of actual and expected events are not equal");
     for (var i = 0; i < actual.length; ++i) {
         var actualEvent = actual[i];
@@ -11,7 +11,7 @@ function compareProcessionEvents(actual: ProcessionEvent[], expected: Procession
         expect(actualEvent.NewIndex).toEqual(expectedEvent.NewIndex, "comparison of NewIndex at index " + i);
         expect(actualEvent.OldIndex).toEqual(expectedEvent.OldIndex, "comparison of OldIndex at index " + i);
         expect(actualEvent.MergedValue).toEqual(expectedEvent.MergedValue, "comparison of MergedValue at index " + i);
-        expect(actualEvent.OldValue).toEqual(expectedEvent.OldValue, "comparison of OldValue at index " + i);
+        expect(actualEvent.Value).toEqual(expectedEvent.Value, "comparison of OldValue at index " + i);
     }
 }
 

@@ -56,13 +56,23 @@ describe("App tests", () => {
         return game;
     }
 
-    it("Game test", () => {
+    it("Game situation test 1", () => {
         var testGrid = Grid.Deserialize("2,4,0,0|0,0,0,0|2,0,0,2|0,0,0,0");
         var game = buildTestGame(testGrid);
         game.Action(Direction.Right);
 
         var resultGrid = game.Grid.Serialize();
         expect(resultGrid).toBe("2,0,2,4|0,0,0,0|0,0,0,4|0,0,0,0"); 
+        expect(testGrid.Serialize()).toBe(resultGrid);
+    });
+    
+    it("Game situation test 2", () => {
+        var testGrid = Grid.Deserialize("0,2,2,0|0,0,0,0|0,0,2,0|0,0,0,0");
+        var game = buildTestGame(testGrid);
+        game.Action(Direction.Left);
+
+        var resultGrid = game.Grid.Serialize();
+        expect(resultGrid).toBe("4,2,0,0|0,0,0,0|2,0,0,0|0,0,0,0"); 
         expect(testGrid.Serialize()).toBe(resultGrid);
     });
     
