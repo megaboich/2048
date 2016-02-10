@@ -1,70 +1,71 @@
 ///<reference path="pixi-animation.ts"/>
+module PixiExtensions {
+    export class AnimationParallel implements IAnimation {
+        Animations: IAnimation[] = [];
+        OnCompleted: () => void;
+        IsCompleted: boolean;
+        private onCompletedInternal: () => void;
 
-class PixiAnimationParallel implements IPixiAnimation {
-    Animations: IPixiAnimation[] = [];
-    OnCompleted: () => void;
-    IsCompleted: boolean;
-    private onCompletedInternal: () => void;
-
-    constructor(animations: IPixiAnimation[], onCompleted: () => void = null) {
-        this.Animations = animations;
-        this.OnCompleted = onCompleted;
-        this.IsCompleted = false;
-    }
-
-    Update(elapsedMs: number): void {
-        if (this.Animations.length == 0) {
-            return;
+        constructor(animations: IAnimation[], onCompleted: () => void = null) {
+            this.Animations = animations;
+            this.OnCompleted = onCompleted;
+            this.IsCompleted = false;
         }
 
-        var completedEvents = <Array<() => void>>[];
-        var processedAnimations = this.Animations.filter((animation: IPixiAnimation) => {
-            animation.Update(elapsedMs);
-            if (animation.IsCompleted && animation.OnCompleted != null) {
-                completedEvents.push(animation.OnCompleted);
+        Update(elapsedMs: number): void {
+            if (this.Animations.length == 0) {
+                return;
             }
-            return !animation.IsCompleted;
-        });
 
-        this.Animations = processedAnimations;
+            var completedEvents = <Array<() => void>>[];
+            var processedAnimations = this.Animations.filter((animation: IAnimation) => {
+                animation.Update(elapsedMs);
+                if (animation.IsCompleted && animation.OnCompleted != null) {
+                    completedEvents.push(animation.OnCompleted);
+                }
+                return !animation.IsCompleted;
+            });
+
+            this.Animations = processedAnimations;
         
-        // call completed events
-        completedEvents.forEach(e => e());
+            // call completed events
+            completedEvents.forEach(e => e());
 
-        if (this.Animations.length == 0) {
-            this.IsCompleted = true;
-        }
-    }
-}
-
-class PixiAnimationQueue implements IPixiAnimation {
-    Animations: IPixiAnimation[] = [];
-    OnCompleted: () => void;
-    IsCompleted: boolean;
-    private onCompletedInternal: () => void;
-
-    constructor(animations: IPixiAnimation[], onCompleted: () => void = null) {
-        this.Animations = animations;
-        this.OnCompleted = onCompleted;
-        this.IsCompleted = false;
-    }
-
-    Update(elapsedMs: number): void {
-        if (this.Animations.length == 0) {
-            return;
-        }
-
-        var animation = this.Animations[0];
-        animation.Update(elapsedMs);
-        if (animation.IsCompleted) {
-            if (animation.OnCompleted != null) {
-                animation.OnCompleted();
+            if (this.Animations.length == 0) {
+                this.IsCompleted = true;
             }
-            this.Animations.splice(0, 1);
+        }
+    }
+
+    export class AnimationQueue implements IAnimation {
+        Animations: IAnimation[] = [];
+        OnCompleted: () => void;
+        IsCompleted: boolean;
+        private onCompletedInternal: () => void;
+
+        constructor(animations: IAnimation[], onCompleted: () => void = null) {
+            this.Animations = animations;
+            this.OnCompleted = onCompleted;
+            this.IsCompleted = false;
         }
 
-        if (this.Animations.length == 0) {
-            this.IsCompleted = true;
+        Update(elapsedMs: number): void {
+            if (this.Animations.length == 0) {
+                return;
+            }
+
+            var animation = this.Animations[0];
+            animation.Update(elapsedMs);
+            if (animation.IsCompleted) {
+                if (animation.OnCompleted != null) {
+                    animation.OnCompleted();
+                }
+                this.Animations.splice(0, 1);
+            }
+
+            if (this.Animations.length == 0) {
+                this.IsCompleted = true;
+            }
         }
     }
 }

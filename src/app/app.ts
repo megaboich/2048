@@ -1,9 +1,9 @@
 ///<reference path="game2048.ts"/>
 ///<reference path="render/pixi-game-render.ts"/>
 
-(() => {
+function InitGame(){
     var game = new Game2048(4, new DefaultRandom());
-    var render = new PixiGameRender(document, game);
+    var render = new PixiGameRender.Render(document, game);
     game.BindRender(render);
 
     Mousetrap.bind('up', function() {
@@ -21,4 +21,6 @@
     Mousetrap.bind('right', function() {
         game.Action(Direction.Right);
     });
-})();
+}
+
+InitGame();
