@@ -40,13 +40,15 @@ class Game2048 {
 
     private processAction(move: Direction) {
         CommonTools.ConsoleLog("start process action", [this.Grid.Serialize(), Direction[move]]);
-        
+
         var rowsData = this.Grid.GetRowDataByDirection(move);
+        var changesDetected = false;
         for (var i = 0; i < rowsData.length; ++i) {
             var rowEvents = RowProcessor.ProcessRow(rowsData[i]);
 
             //apply row events to game grid and publish them to subscribers
             for (var ie = 0; ie < rowEvents.length; ++ie) {
+                changesDetected = true;
                 var rowEvent = rowEvents[ie];
                 var oldPos = rowsData[i][rowEvent.OldIndex];
                 var newPos = rowsData[i][rowEvent.NewIndex];
@@ -63,14 +65,18 @@ class Game2048 {
             }
         }
 
-        var newTile = this.insertNewTileToVacantSpace();
-        if (newTile != null) {
-            this.OnTilesUpdated.NotifyObservers(new TileCreatedEvent(newTile, newTile.Value));
+        if (changesDetected) {
+            var newTile = this.insertNewTileToVacantSpace();
+            if (newTile != null) {
+                this.OnTilesUpdated.NotifyObservers(new TileCreatedEvent(newTile, newTile.Value));
+            }
+            else {
+                this.OnGameFinished.NotifyObservers(null);
+            }
+        } else {
+            this.OnTilesUpdated.NotifyObservers(null);
         }
-        else {
-            this.OnGameFinished.NotifyObservers(null);
-        }
-        
+
         CommonTools.ConsoleLog("  end process action", [this.Grid.Serialize()])
     }
 

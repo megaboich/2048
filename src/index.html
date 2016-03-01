@@ -1,14 +1,53 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <title>2048</title>
+    <meta charset="utf-8">
+    <title>2048</title>
+
+    <style>
+        body {
+            background-color: #eFeFeF;
+        }
+        
+        #control-up {
+            position: absolute;
+            left: 300px;
+            top: 450px;
+        }
+        
+        #control-down {
+            position: absolute;
+            left: 300px;
+            top: 485px;
+        }
+        
+        #control-left {
+            position: absolute;
+            left: 265px;
+            top: 485px;
+        }
+        
+        #control-right {
+            position: absolute;
+            left: 335px;
+            top: 485px;
+        }
+    </style>
 </head>
 
 <body>
-  <script src="lib/pixi.js"></script>
-  <script src="lib/mousetrap.js"></script>
-  <script src="app.js"></script>
+    <div id="controls">
+        <img id="control-up" src="assets\btn_up.png" alt="up" />
+        <img id="control-down" src="assets\btn_down.png" alt="down" />
+        <img id="control-left" src="assets\btn_left.png" alt="left" />
+        <img id="control-right" src="assets\btn_right.png" alt="right" />
+    </div>
+    
+    <script src="lib/pixi.js"></script>
+    <script src="lib/mousetrap.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

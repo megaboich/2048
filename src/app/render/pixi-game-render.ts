@@ -11,6 +11,110 @@ module PixiGameRender {
         TileKey: string;
     }
 
+    class RenderHelper {
+        public static CreateTileGraphics(irow: number, icell: number, tileValue: number, key: string): TileGraphics {
+            var tileSize = 50;
+            //Create graphics for cell
+            var graphics = new TileGraphics();
+            graphics.TileKey = key;
+
+            graphics.lineStyle(1, 0xe0e0e0, 1);
+            graphics.beginFill(this.getTileBgColor(tileValue), 1);
+            graphics.drawRect(0, 0, tileSize, tileSize);
+            graphics.endFill();
+
+            var style = <PIXI.TextStyle>{
+                font: this.getTileFontSize(tileValue) + ' Inconsolata, Courier New',
+                fill: "#" + this.getTileTextColor(tileValue).toString(16)
+            };
+            var tileText = new PIXI.Text(tileValue.toString(), style);
+            tileText.x = this.getTileTextXOffset(tileValue);
+            tileText.y = this.getTileTextYOffset(tileValue);
+            graphics.addChild(tileText);
+
+            return graphics;
+        }
+
+        public static CreateScoresText(): PIXI.Text {
+            var style = <PIXI.TextStyle>{
+                font: '32px Inconsolata, Courier New',
+                fill: "#776E65"
+            };
+            var scoresText = new PIXI.Text("0", style);
+            scoresText.x = 300;
+            scoresText.y = 40;
+            return scoresText;
+        }
+
+        private static getTileFontSize(value: number): string {
+            if (value < 100) {
+                return "32px";
+            }
+            if (value < 1000) {
+                return "28px";
+            }
+            return "16px";
+        }
+
+        private static getTileTextXOffset(value: number): number {
+            if (value < 10) {
+                return 17;
+            }
+            if (value < 100) {
+                return 8;
+            }
+            return 4;
+        }
+         private static getTileTextYOffset(value: number): number {
+            if (value < 100) {
+                return 13;
+            }
+            if (value < 1000) {
+                return 15;
+            }
+            return 17;
+        }
+
+        private static getTileTextColor(value: number): number {
+            return value > 4
+                ? 0xF9F6F2
+                : 0x776E65;
+        }
+
+        private static getTileBgColor(value: number): number {
+            switch (value) {
+                case 2:
+                    return 0xeee4da;
+                case 4:
+                    return 0xEDE0C8;
+                case 8:
+                    return 0xF2B179;
+                case 16:
+                    return 0xF59563;
+                case 32:
+                    return 0xF67C5F;
+                case 64:
+                    return 0xF65E3B;
+                case 128:
+                    return 0xEDCF72;
+                case 256:
+                    return 0xEDCC61;
+                case 512:
+                    return 0xEDC850;
+                case 1024:
+                    return 0xEDC53F;
+                case 2048:
+                    return 0xEDC22E;
+                case 4096:
+                    return 0xedc22e;
+                case 8192:
+                    return 0xedc22e;
+                default:
+                    return 0xedc22e;
+            }
+        }
+    }
+
     export class Render implements IGame2048Render {
         OnTurnAnimationsCompleted: Observable<void> = new Observable<void>();
 
@@ -21,13 +125,13 @@ module PixiGameRender {
         private staticRoot: PIXI.Container = null;
         private game: Game2048;
         private animationsManager: PixiExtensions.AnimationsManager;
-        private flipper: boolean = false;
+
         private tileSize: number = 50;
 
         constructor(document: Document, game: Game2048) {
             this.game = game;
 
-            var renderer = PIXI.autoDetectRenderer(400, 600, { backgroundColor: 0xeFeFeF });
+            var renderer = PIXI.autoDetectRenderer(400, 400, { backgroundColor: 0xeFeFeF });
             document.body.appendChild(renderer.view);
         
             // create the root of the scene graph
@@ -42,7 +146,7 @@ module PixiGameRender {
                 this.animationsManager.Update(ticker.elapsedMS);
 
                 renderer.render(this.stage);
-
+                this.scoresText.text = game.Scores.toString();
                 this.fpsText.text = ticker.FPS.toFixed(2);
             });
             ticker.start();
@@ -56,8 +160,14 @@ module PixiGameRender {
         }
 
         OnTilesUpdated(event: TileUpdateEvent) {
+            if (event === null) {
+                // No tiles were moved
+                this.animationsManager.AddAnimation(new PixiExtensions.AnimationQueue([
+                    new PixiExtensions.AnimationScale(this.scoresText, 50, 1.3),
+                    new PixiExtensions.AnimationScale(this.scoresText, 100, 1),
+                ]));
+            }
             if (event instanceof TileMoveEvent) {
-                console.log(`move from ${event.Position} to ${event.NewPosition}, value ${event.Value}, del:${event.ShouldBeDeleted}`);
 
                 var moveEvent = <TileMoveEvent>event;
                 var tileToMove = this.tiles.Get(this.getTileKey(moveEvent.Position));
@@ -97,15 +207,6 @@ module PixiGameRender {
                     }));
 
             } else if (event instanceof TileCreatedEvent) {
-                this.flipper = !this.flipper;
-                this.animationsManager.AddAnimation(new PixiExtensions.AnimationParallel([
-                    //new PixiAnimationRotate(this.scoresText, 500, 2 * Math.PI),
-                    new PixiExtensions.AnimationMove(this.scoresText, 500, { x: this.flipper ? 300 : 100, y: 40 }),
-                    /*new PixiAnimationQueue([
-                        new PixiAnimationScale(this.scoresText, 250, 2),
-                        new PixiAnimationScale(this.scoresText, 250, 1)
-                    ])*/
-                ]));
 
                 var createdEvent = <TileCreatedEvent>event;
                 var newTile = this.addTileGraphics(createdEvent.Position.RowIndex, createdEvent.Position.CellIndex, createdEvent.TileValue);
@@ -141,17 +242,14 @@ module PixiGameRender {
             this.staticRoot = new PIXI.Container();
             this.stage.addChild(this.staticRoot);
 
+            this.scoresText = RenderHelper.CreateScoresText();
+            this.staticRoot.addChild(this.scoresText);
+
             var style = <PIXI.TextStyle>{
                 font: 'Inconsolata, Courier New',
                 fill: '#005521',
                 lineHeight: 14,
             };
-
-            this.scoresText = new PIXI.Text(this.game.Scores.toString(), style);
-            this.scoresText.x = 100;
-            this.scoresText.y = 40;
-            this.staticRoot.addChild(this.scoresText);
-
             this.fpsText = new PIXI.Text("", style);
             this.fpsText.x = 300;
             this.fpsText.y = 8;
@@ -206,30 +304,11 @@ module PixiGameRender {
         }
 
         private addTileGraphics(irow: number, icell: number, tileValue: number): TileGraphics {
-            var tileSize = 50;
-            //Create graphics for cell
-            var graphics = new TileGraphics();
-            graphics.TileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
-            /*
-                    graphics.lineStyle(1, 0xa0a0a0, 1);
-                    graphics.beginFill(this.getTileColor(tileValue), 1);
-                    graphics.drawRect(0, 0, tileSize, tileSize);
-                    graphics.endFill();
-            */
-            this.setTileCoordinates(graphics, irow, icell);
-
-            var style = <PIXI.TextStyle>{
-                font: 'Inconsolata, Courier New',
-                fill: '#005521',
-                lineHeight: 14,
-            };
-            var tileText = new PIXI.Text(tileValue.toString(), style);
-            tileText.x = 20;
-            tileText.y = 20;
-            graphics.addChild(tileText);
-
-            this.stage.addChild(graphics);
-            return graphics;
+            var tileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
+            var tileGraphics = RenderHelper.CreateTileGraphics(irow, icell, tileValue, tileKey);
+            this.setTileCoordinates(tileGraphics, irow, icell);
+            this.stage.addChild(tileGraphics);
+            return tileGraphics;
         }
 
         private bringToFront(tile: PIXI.DisplayObject) {
@@ -250,39 +329,6 @@ module PixiGameRender {
 
         private getTileKey(pos: TilePosition): string {
             return pos.RowIndex.toString() + "_" + pos.CellIndex.toString();
-        }
-
-        private getTileColor(value: number) {
-            switch (value) {
-                case 2:
-                    return 0xeee4da;
-                case 4:
-                    return 0xEDE0C8;
-                case 8:
-                    return 0xF2B179;
-                case 16:
-                    return 0xF59563;
-                case 32:
-                    return 0xF67C5F;
-                case 64:
-                    return 0xF65E3B;
-                case 128:
-                    return 0xEDCF72;
-                case 256:
-                    return 0xEDCC61;
-                case 512:
-                    return 0xEDC850;
-                case 1024:
-                    return 0xEDC53F;
-                case 2048:
-                    return 0xEDC22E;
-                case 4096:
-                    return 0xedc22e;
-                case 8192:
-                    return 0xedc22e;
-                default:
-                    return 0xedc22e;
-            }
         }
     }
 }

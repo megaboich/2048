@@ -18,7 +18,8 @@ gulp.task('deploy_libs_js_debug', function () {
 gulp.task('deploy_html_debug', function () {
     var taskResult = gulp
         .src([
-            'src/**/*.html'
+            'src/**/*.html',
+            'src/**/*.png'
         ])
         .pipe(gulp.dest('build'));
 
