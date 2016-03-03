@@ -9,6 +9,11 @@ interface IGame2048Render {
     OnTurnAnimationsCompleted: Observable<void>;
 }
 
+interface IGameState {
+    Scores: number,
+    GridSerialized: string
+}
+
 class Game2048 {
     Scores: number = 0;
     Grid: Grid;
@@ -23,14 +28,28 @@ class Game2048 {
         this.insertNewTileToVacantSpace();
     }
 
-    BindRender(render: IGame2048Render) {
+    BindRender(render: IGame2048Render): void {
         this.OnTilesUpdated.RegisterObserver(render.OnTilesUpdated.bind(render));
         this.OnGameFinished.RegisterObserver(render.OnGameFinished.bind(render));
 
         render.OnTurnAnimationsCompleted.RegisterObserver(this.onTurnAnimationsCompleted.bind(this));
     }
 
-    Action(move: Direction) {
+    Serialize(): string {
+        var state = <IGameState>{
+            Scores: this.Scores,
+            GridSerialized: this.Grid.Serialize()
+        };
+        return JSON.stringify(state);
+    }
+
+    public InitFromState(gameState: string): void {
+        var state = <IGameState>JSON.parse(gameState);
+        this.Scores = state.Scores;
+        this.Grid = Grid.Deserialize(state.GridSerialized);
+    }
+
+    Action(move: Direction): void {
         var action = this.processAction.bind(this, move);
         this.inputActions.push(action);
         if (this.inputActions.length == 1) {

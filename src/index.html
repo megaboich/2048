@@ -14,25 +14,37 @@
         #control-up {
             position: absolute;
             left: 300px;
-            top: 450px;
+            top: 410px;
         }
         
         #control-down {
             position: absolute;
             left: 300px;
-            top: 485px;
+            top: 445px;
         }
         
         #control-left {
             position: absolute;
             left: 265px;
-            top: 485px;
+            top: 445px;
         }
         
         #control-right {
             position: absolute;
             left: 335px;
-            top: 485px;
+            top: 445px;
+        }
+        
+        #btn-save {
+            position: absolute;
+            left: 50px;
+            top: 410px;
+        }
+        
+        #btn-load {
+            position: absolute;
+            left: 50px;
+            top: 440px;
         }
     </style>
 </head>
@@ -43,8 +55,16 @@
         <img id="control-down" src="assets\btn_down.png" alt="down" />
         <img id="control-left" src="assets\btn_left.png" alt="left" />
         <img id="control-right" src="assets\btn_right.png" alt="right" />
+
+        <button id="btn-save" style="width: 80px; height: 20px;">Save</button>
+
+        <div id="btn-load" style="display: block; width: 80px; height: 20px; overflow: hidden;">
+            <button style="width: 80px; height: 20px;">Load</button>
+            <input type="file" id="input-load" name="upload" style="font-size: 50px; width: 120px; opacity: 0; filter:alpha(opacity: 0);  position: relative; top: -40px; left: -20px"
+            />
+        </div>
     </div>
-    
+
     <script src="lib/pixi.js"></script>
     <script src="lib/mousetrap.js"></script>
     <script src="app.js"></script>

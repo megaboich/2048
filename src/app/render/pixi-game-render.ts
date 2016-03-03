@@ -4,116 +4,9 @@
 ///<reference path="pixi-animation-manager.ts"/>
 ///<reference path="pixi-animation-move.ts"/>
 ///<reference path="..\game2048.ts"/>
+///<reference path="pixi-game-render-helper.ts"/>
 
 module PixiGameRender {
-
-    class TileGraphics extends PIXI.Graphics {
-        TileKey: string;
-    }
-
-    class RenderHelper {
-        public static CreateTileGraphics(irow: number, icell: number, tileValue: number, key: string): TileGraphics {
-            var tileSize = 50;
-            //Create graphics for cell
-            var graphics = new TileGraphics();
-            graphics.TileKey = key;
-
-            graphics.lineStyle(1, 0xe0e0e0, 1);
-            graphics.beginFill(this.getTileBgColor(tileValue), 1);
-            graphics.drawRect(0, 0, tileSize, tileSize);
-            graphics.endFill();
-
-            var style = <PIXI.TextStyle>{
-                font: this.getTileFontSize(tileValue) + ' Inconsolata, Courier New',
-                fill: "#" + this.getTileTextColor(tileValue).toString(16)
-            };
-            var tileText = new PIXI.Text(tileValue.toString(), style);
-            tileText.x = this.getTileTextXOffset(tileValue);
-            tileText.y = this.getTileTextYOffset(tileValue);
-            graphics.addChild(tileText);
-
-            return graphics;
-        }
-
-        public static CreateScoresText(): PIXI.Text {
-            var style = <PIXI.TextStyle>{
-                font: '32px Inconsolata, Courier New',
-                fill: "#776E65"
-            };
-            var scoresText = new PIXI.Text("0", style);
-            scoresText.x = 300;
-            scoresText.y = 40;
-            return scoresText;
-        }
-
-        private static getTileFontSize(value: number): string {
-            if (value < 100) {
-                return "32px";
-            }
-            if (value < 1000) {
-                return "28px";
-            }
-            return "16px";
-        }
-
-        private static getTileTextXOffset(value: number): number {
-            if (value < 10) {
-                return 17;
-            }
-            if (value < 100) {
-                return 8;
-            }
-            return 4;
-        }
-         private static getTileTextYOffset(value: number): number {
-            if (value < 100) {
-                return 13;
-            }
-            if (value < 1000) {
-                return 15;
-            }
-            return 17;
-        }
-
-        private static getTileTextColor(value: number): number {
-            return value > 4
-                ? 0xF9F6F2
-                : 0x776E65;
-        }
-
-        private static getTileBgColor(value: number): number {
-            switch (value) {
-                case 2:
-                    return 0xeee4da;
-                case 4:
-                    return 0xEDE0C8;
-                case 8:
-                    return 0xF2B179;
-                case 16:
-                    return 0xF59563;
-                case 32:
-                    return 0xF67C5F;
-                case 64:
-                    return 0xF65E3B;
-                case 128:
-                    return 0xEDCF72;
-                case 256:
-                    return 0xEDCC61;
-                case 512:
-                    return 0xEDC850;
-                case 1024:
-                    return 0xEDC53F;
-                case 2048:
-                    return 0xEDC22E;
-                case 4096:
-                    return 0xedc22e;
-                case 8192:
-                    return 0xedc22e;
-                default:
-                    return 0xedc22e;
-            }
-        }
-    }
 
     export class Render implements IGame2048Render {
         OnTurnAnimationsCompleted: Observable<void> = new Observable<void>();
@@ -136,8 +29,7 @@ module PixiGameRender {
         
             // create the root of the scene graph
             this.stage = new PIXI.Container();
-            this.rebuildStaticObjects();
-            this.rebuildDynamicObjects();
+            this.RebuildGraphics();
 
             this.animationsManager = new PixiExtensions.AnimationsManager(this.onAnimationsCompleted.bind(this));
 
@@ -150,6 +42,11 @@ module PixiGameRender {
                 this.fpsText.text = ticker.FPS.toFixed(2);
             });
             ticker.start();
+        }
+
+        RebuildGraphics(): void {
+            this.rebuildStaticObjects();
+            this.rebuildDynamicObjects();
         }
 
         OnGameFinished() {
@@ -174,7 +71,7 @@ module PixiGameRender {
                 this.unregisterTile(tileToMove);
                 this.bringToFront(tileToMove);
                 var newPos = <PixiExtensions.EntityPosition>{};
-                this.setTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
+                RenderHelper.SetTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
 
                 this.animationsManager.AddAnimation(new PixiExtensions.AnimationMove(tileToMove, 150, newPos, () => {
                     this.removeTileGraphics(tileToMove);
@@ -193,7 +90,7 @@ module PixiGameRender {
                 this.unregisterTile(tileToMove);
                 this.bringToFront(tileToMove);
                 var newPos = <PixiExtensions.EntityPosition>{};
-                this.setTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
+                RenderHelper.SetTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
 
                 this.animationsManager.AddAnimation(
                     new PixiExtensions.AnimationMove(tileToMove, 150, newPos, () => {
@@ -241,6 +138,9 @@ module PixiGameRender {
 
             this.staticRoot = new PIXI.Container();
             this.stage.addChild(this.staticRoot);
+
+            var otherStatic = RenderHelper.CreateOtherStatic(this.game);
+            this.staticRoot.addChild(otherStatic);
 
             this.scoresText = RenderHelper.CreateScoresText();
             this.staticRoot.addChild(this.scoresText);
@@ -306,7 +206,7 @@ module PixiGameRender {
         private addTileGraphics(irow: number, icell: number, tileValue: number): TileGraphics {
             var tileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
             var tileGraphics = RenderHelper.CreateTileGraphics(irow, icell, tileValue, tileKey);
-            this.setTileCoordinates(tileGraphics, irow, icell);
+            RenderHelper.SetTileCoordinates(tileGraphics, irow, icell);
             this.stage.addChild(tileGraphics);
             return tileGraphics;
         }
@@ -319,12 +219,6 @@ module PixiGameRender {
                     p.addChild(tile);
                 }
             }
-        }
-
-        private setTileCoordinates(fig: PixiExtensions.EntityPosition, iRow: number, iCell: number) {
-            var tileSize = 50;
-            fig.x = tileSize + iCell * tileSize;
-            fig.y = 150 + iRow * tileSize;
         }
 
         private getTileKey(pos: TilePosition): string {

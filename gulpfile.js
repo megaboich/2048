@@ -19,7 +19,8 @@ gulp.task('deploy_html_debug', function () {
     var taskResult = gulp
         .src([
             'src/**/*.html',
-            'src/**/*.png'
+            'src/**/*.png',
+            'src/**/*.css'
         ])
         .pipe(gulp.dest('build'));
 
