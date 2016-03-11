@@ -52,6 +52,7 @@ function InitGame() {
                     var gameState = e.target.result;
                     game.InitFromState(gameState);
                     render.RebuildGraphics();
+                    document.body.focus();
                 };
             })(f);
 

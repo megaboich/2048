@@ -7,16 +7,16 @@
 
 module PixiGameRender {
 
-    export class TileGraphics extends PIXI.Graphics {
+    export class TileSprite extends PIXI.Graphics {
         TileKey: string;
     }
 
     export class RenderHelper {
         public static TileSize = 50;
 
-        public static CreateTileGraphics(irow: number, icell: number, tileValue: number, key: string): TileGraphics {
+        public static CreateTileSprite(irow: number, icell: number, tileValue: number, key: string): TileSprite {
             //Create graphics for cell
-            var graphics = new TileGraphics();
+            var graphics = new TileSprite();
             graphics.TileKey = key;
 
             graphics.lineStyle(1, 0xe0e0e0, 1);
@@ -47,7 +47,18 @@ module PixiGameRender {
             return scoresText;
         }
 
-        public static CreateOtherStatic(game: Game2048): PIXI.Graphics {
+        public static GreateGameOverGraphics(): PIXI.DisplayObject {
+            var style = <PIXI.TextStyle>{
+                font: '32px Inconsolata, Courier New',
+                fill: "#776E65"
+            };
+            var text = new PIXI.Text("GAME OVER", style);
+            text.x = this.TileSize;
+            text.y = 46;
+            return text;
+        }
+
+        public static CreateOtherStatic(game: Game2048): PIXI.DisplayObject {
             // create frame
             var size = game.Grid.Size;
             var frame = new PIXI.Graphics();

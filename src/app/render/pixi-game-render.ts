@@ -12,7 +12,7 @@ module PixiGameRender {
         OnTurnAnimationsCompleted: Observable<void> = new Observable<void>();
 
         private stage: PIXI.Container;
-        private tiles: Dictionary<string, TileGraphics> = new Dictionary<string, TileGraphics>([]);
+        private tiles: Dictionary<string, TileSprite> = new Dictionary<string, TileSprite>([]);
         private scoresText: PIXI.Text;
         private fpsText: PIXI.Text;
         private staticRoot: PIXI.Container = null;
@@ -20,13 +20,14 @@ module PixiGameRender {
         private animationsManager: PixiExtensions.AnimationsManager;
 
         private tileSize: number = 50;
+        private gameOverRendered: boolean;
 
         constructor(document: Document, game: Game2048) {
             this.game = game;
 
             var renderer = PIXI.autoDetectRenderer(400, 400, { backgroundColor: 0xeFeFeF });
             document.body.appendChild(renderer.view);
-        
+
             // create the root of the scene graph
             this.stage = new PIXI.Container();
             this.RebuildGraphics();
@@ -45,15 +46,17 @@ module PixiGameRender {
         }
 
         RebuildGraphics(): void {
+            this.gameOverRendered = false;
             this.rebuildStaticObjects();
             this.rebuildDynamicObjects();
         }
 
         OnGameFinished() {
-            var text = new PIXI.Text("GAME OVER");
-            text.x = 200;
-            text.y = 200;
-            this.staticRoot.addChild(text);
+            if (!this.gameOverRendered) {
+                var gog = RenderHelper.GreateGameOverGraphics();
+                this.staticRoot.addChild(gog);
+            }
+            this.gameOverRendered = true;
         }
 
         OnTilesUpdated(event: TileUpdateEvent) {
@@ -159,20 +162,20 @@ module PixiGameRender {
         private rebuildDynamicObjects() {
             // Update scores
             this.scoresText.text = this.game.Scores.toString();
-        
+
             // Remove existing tiles
             this.tiles.Values().forEach(element => {
                 this.stage.removeChild(element);
             });
 
             this.stage.children.forEach((item) => {
-                if (item instanceof TileGraphics) {
-                    console.log('Found not deleted ' + (<TileGraphics>item).TileKey);
+                if (item instanceof TileSprite) {
+                    console.log('Found not deleted ' + (<TileSprite>item).TileKey);
                 }
             });
 
-            this.tiles = new Dictionary<string, TileGraphics>([]);
-        
+            this.tiles = new Dictionary<string, TileSprite>([]);
+
             // Add tiles from game grid
             for (var irow = 0; irow < this.game.Grid.Size; ++irow) {
                 for (var icell = 0; icell < this.game.Grid.Size; ++icell) {
@@ -185,17 +188,17 @@ module PixiGameRender {
             }
         }
 
-        private registerTile(tile: TileGraphics): void {
+        private registerTile(tile: TileSprite): void {
             this.tiles.Add(tile.TileKey, tile);
         }
 
-        private unregisterTile(tile: TileGraphics): void {
+        private unregisterTile(tile: TileSprite): void {
             var key = tile.TileKey;
             this.tiles.Remove(key);
             console.log('unregistered ' + key);
         }
 
-        private removeTileGraphics(tile: TileGraphics) {
+        private removeTileGraphics(tile: TileSprite) {
             if (!tile.parent) {
                 console.log('tile parent is null');
                 return;
@@ -203,9 +206,9 @@ module PixiGameRender {
             tile.parent.removeChild(tile);
         }
 
-        private addTileGraphics(irow: number, icell: number, tileValue: number): TileGraphics {
+        private addTileGraphics(irow: number, icell: number, tileValue: number): TileSprite {
             var tileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
-            var tileGraphics = RenderHelper.CreateTileGraphics(irow, icell, tileValue, tileKey);
+            var tileGraphics = RenderHelper.CreateTileSprite(irow, icell, tileValue, tileKey);
             RenderHelper.SetTileCoordinates(tileGraphics, irow, icell);
             this.stage.addChild(tileGraphics);
             return tileGraphics;
