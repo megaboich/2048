@@ -7,33 +7,40 @@
 
 module PixiGameRender {
 
-    export class TileSprite extends PIXI.Graphics {
+    export class TileSprite extends PIXI.Container {
         TileKey: string;
     }
 
     export class RenderHelper {
         public static TileSize = 50;
+        public static TileSizeHalf = 25;
 
         public static CreateTileSprite(irow: number, icell: number, tileValue: number, key: string): TileSprite {
             //Create graphics for cell
-            var graphics = new TileSprite();
-            graphics.TileKey = key;
+            var tileSprite = new TileSprite();
+            tileSprite.TileKey = key;
+            tileSprite.width = this.TileSize;
+            tileSprite.height = this.TileSize;
 
-            graphics.lineStyle(1, 0xe0e0e0, 1);
-            graphics.beginFill(this.getTileBgColor(tileValue), 1);
-            graphics.drawRect(0, 0, this.TileSize, this.TileSize);
-            graphics.endFill();
+            var tileGraphics = new PIXI.Graphics;
+            tileGraphics.lineStyle(1, 0xe0e0e0, 1);
+            tileGraphics.beginFill(this.getTileBgColor(tileValue), 1);
+            tileGraphics.drawRect(0, 0, this.TileSize, this.TileSize);
+            tileGraphics.endFill();
+            tileGraphics.x = -this.TileSizeHalf;
+            tileGraphics.y = -this.TileSizeHalf;
+            tileSprite.addChild(tileGraphics);
 
             var style = <PIXI.TextStyle>{
                 font: this.getTileFontSize(tileValue) + ' Inconsolata, Courier New',
                 fill: "#" + this.getTileTextColor(tileValue).toString(16)
             };
             var tileText = new PIXI.Text(tileValue.toString(), style);
-            tileText.x = this.getTileTextXOffset(tileValue);
-            tileText.y = this.getTileTextYOffset(tileValue);
-            graphics.addChild(tileText);
+            tileText.x = this.getTileTextXOffset(tileValue) - this.TileSizeHalf;
+            tileText.y = this.getTileTextYOffset(tileValue) - this.TileSizeHalf;
+            tileSprite.addChild(tileText);
 
-            return graphics;
+            return tileSprite;
         }
 
         public static CreateScoresText(): PIXI.Text {
@@ -68,9 +75,9 @@ module PixiGameRender {
             return frame;
         }
 
-        public static SetTileCoordinates(fig: PixiExtensions.EntityPosition, iRow: number, iCell: number) {
-            fig.x = this.TileSize * 2 + iCell * this.TileSize;
-            fig.y = this.TileSize * 2 + iRow * this.TileSize;
+        public static CalculateTileCoordinates(fig: PixiExtensions.EntityPosition, iRow: number, iCell: number) {
+            fig.x = this.TileSize * 2 + iCell * this.TileSize + this.TileSizeHalf;
+            fig.y = this.TileSize * 2 + iRow * this.TileSize + this.TileSizeHalf;
         }
 
         private static getTileFontSize(value: number): string {

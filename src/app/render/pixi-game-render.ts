@@ -18,8 +18,6 @@ module PixiGameRender {
         private staticRoot: PIXI.Container = null;
         private game: Game2048;
         private animationsManager: PixiExtensions.AnimationsManager;
-
-        private tileSize: number = 50;
         private gameOverRendered: boolean;
 
         constructor(document: Document, game: Game2048) {
@@ -74,7 +72,7 @@ module PixiGameRender {
                 this.unregisterTile(tileToMove);
                 this.bringToFront(tileToMove);
                 var newPos = <PixiExtensions.EntityPosition>{};
-                RenderHelper.SetTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
+                RenderHelper.CalculateTileCoordinates(newPos, moveEvent.NewPosition.RowIndex, moveEvent.NewPosition.CellIndex);
 
                 this.animationsManager.AddAnimation(new PixiExtensions.AnimationMove(tileToMove, 150, newPos, () => {
                     this.removeTileGraphics(tileToMove);
@@ -93,7 +91,7 @@ module PixiGameRender {
                 this.unregisterTile(tileToMove);
                 this.bringToFront(tileToMove);
                 var newPos = <PixiExtensions.EntityPosition>{};
-                RenderHelper.SetTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
+                RenderHelper.CalculateTileCoordinates(newPos, mergeEvent.TilePosToMergeWith.RowIndex, mergeEvent.TilePosToMergeWith.CellIndex);
 
                 this.animationsManager.AddAnimation(
                     new PixiExtensions.AnimationMove(tileToMove, 150, newPos, () => {
@@ -113,15 +111,10 @@ module PixiGameRender {
                 this.registerTile(newTile);
                 newTile.alpha = 0;
                 newTile.scale = new PIXI.Point(0.1, 0.1);
-                newTile.x += (this.tileSize / 2);
-                newTile.y += (this.tileSize / 2);
                 this.animationsManager.AddAnimation(new PixiExtensions.AnimationQueue([
                     new PixiExtensions.AnimationDelay(200),
                     new PixiExtensions.AnimationFade(newTile, 1, 1),
-                    new PixiExtensions.AnimationParallel([
-                        new PixiExtensions.AnimationScale(newTile, 150, 1),
-                        new PixiExtensions.AnimationMove(newTile, 150, { x: newTile.x - (this.tileSize / 2), y: newTile.y - (this.tileSize / 2) }),
-                    ])
+                    new PixiExtensions.AnimationScale(newTile, 150, 1)
                 ]));
 
             }
@@ -209,7 +202,7 @@ module PixiGameRender {
         private addTileGraphics(irow: number, icell: number, tileValue: number): TileSprite {
             var tileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
             var tileGraphics = RenderHelper.CreateTileSprite(irow, icell, tileValue, tileKey);
-            RenderHelper.SetTileCoordinates(tileGraphics, irow, icell);
+            RenderHelper.CalculateTileCoordinates(tileGraphics, irow, icell);
             this.stage.addChild(tileGraphics);
             return tileGraphics;
         }
