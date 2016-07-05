@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/4e6d9cc32c604bfe55fcba91a98bc0b1a6b7a507/pixi.js/pixi.js.d.ts",
+    "raw": "registry:dt/pixi.js#3.0.9+20160613144105",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/4e6d9cc32c604bfe55fcba91a98bc0b1a6b7a507/pixi.js/pixi.js.d.ts"
+  }
+}
