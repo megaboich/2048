@@ -1,40 +1,51 @@
-var webpack = require('webpack');
+const path = require("path");
+const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
-module.exports = {
+module.exports = function(env) {
+  env = env || {};
+  const isProduction = !!env.prod;
+
+  const webpackConfig = {
+    mode: isProduction ? "production" : "development",
     entry: {
-        thirdparty: [
-            'pixi.js',
-            'mousetrap',
-            'file-saver'
-        ],
-
-        app: './app/app.ts',
-        tests: './tests.js'
+      app: "./app/app.ts",
+      tests: "./app/tests.js"
     },
     output: {
-        filename: './build/[name].js',
-        pathinfo: true
+      path: path.join(__dirname, "/dist")
     },
-    // Turn on sourcemaps
-    devtool: 'source-map',
     resolve: {
-        extensions: ['', '.ts', '.js',]
-    },
-    plugins: [
-        // remove 3rd patry from app and tests bundles
-        new webpack.optimize.CommonsChunkPlugin({ name: 'thirdparty', chunks: ['app'] }),
-        new webpack.optimize.CommonsChunkPlugin({ name: 'thirdparty', chunks: ['tests'] }),
-
-        // Add minification
-        new webpack.optimize.UglifyJsPlugin(),
-    ],
-    externals: {
+      extensions: [".ts", ".js"],
+      modules: [__dirname, "node_modules"]
     },
     module: {
-        loaders: [
-            { test: /\.ts$/, loader: 'ts' },
-            { test: /\.css$/, loader: 'style!css' },
-            { test: /\.(png|jpe?g|gif)$/, loader: 'url?limit=100000' },
-        ]
+      rules: [
+        { test: /\.ts$/, loader: "ts-loader" },
+        { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
+        {
+          test: /\.(png|jpg|jpeg|gif|svg|woff)$/,
+          loader: "url-loader",
+          options: { limit: 20000 }
+        }
+      ]
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        template: "app/index.html",
+        filename: "index.html",
+        chunks: ["app"]
+      }),
+      new HtmlWebpackPlugin({
+        template: "app/tests.html",
+        filename: "tests.html"
+      })
+    ],
+    devtool: isProduction ? false : "eval-source-map",
+    devServer: {
+      contentBase: path.join(__dirname, "dist"),
+      port: 10001
     }
-}
+  };
+  return webpackConfig;
+};

@@ -1,15 +1,17 @@
 ﻿{
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "removeComments": false,
-        "noImplicitAny": false
-    },
-    "exclude": [
-        "node_modules"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "sourceMap": true,
+    "inlineSourceMap": false,
+
+    "removeComments": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "importHelpers": true
+  },
+  "lib": ["dom", "es6"],
+  "exclude": ["node_modules"]
 }

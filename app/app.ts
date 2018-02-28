@@ -1,72 +1,74 @@
-import { Game2048 } from './game2048'
-import { Direction } from './enums'
-import { DefaultRandom } from './helpers/random'
-import { PixiRender } from './render/pixi-game-render'
+import * as FileSaver from "file-saver";
+import * as Mousetrap from "mousetrap";
 
-import '../styles/style.css'
-import * as FileSaver from 'file-saver'
+import { Game2048 } from "app/game2048";
+import { DefaultRandom } from "app/helpers/random";
+import { PixiRender } from "app/render/pixi-game-render";
+import { Direction } from "app/enums";
 
-function InitGame() {
-    var game = new Game2048(4, new DefaultRandom());
-    var render = new PixiRender(document, game);
-    game.BindRender(render);
+import "app/styles/style.css";
 
-    Mousetrap.bind('up', function () {
-        game.Action(Direction.Up);
-    });
+function initGame() {
+  var game = new Game2048(4, new DefaultRandom());
+  var render = new PixiRender(document, game);
+  game.BindRender(render);
 
-    Mousetrap.bind('down', function () {
-        game.Action(Direction.Down);
-    });
+  Mousetrap.bind("up", function() {
+    game.Action(Direction.Up);
+  });
 
-    Mousetrap.bind('left', function () {
-        game.Action(Direction.Left);
-    });
+  Mousetrap.bind("down", function() {
+    game.Action(Direction.Down);
+  });
 
-    Mousetrap.bind('right', function () {
-        game.Action(Direction.Right);
-    });
+  Mousetrap.bind("left", function() {
+    game.Action(Direction.Left);
+  });
 
-    setTimeout(() => {
-        document.getElementById('control-up').addEventListener("click", () => {
-            game.Action(Direction.Up);
-        });
-        document.getElementById('control-down').addEventListener("click", () => {
-            game.Action(Direction.Down);
-        });
-        document.getElementById('control-left').addEventListener("click", () => {
-            game.Action(Direction.Left);
-        });
-        document.getElementById('control-right').addEventListener("click", () => {
-            game.Action(Direction.Right);
-        });
+  Mousetrap.bind("right", function() {
+    game.Action(Direction.Right);
+  });
 
-        document.getElementById('btn-save').addEventListener("click", () => {
-            var gamestate = game.Serialize();
-            var file = new File([gamestate], "game2048.txt", { type: 'plain/text' });
-            FileSaver.saveAs(file);
-        });
+  const getElem = (id: string): HTMLElement => {
+    const elem = document.getElementById(id);
+    if (!elem) {
+      throw new Error("Can't find element by id: " + id);
+    }
+    return elem;
+  };
 
-        document.getElementById('input-load').addEventListener("change", (evt: any) => {
-            var files = evt.target.files; // FileList object
+  getElem("control-up").addEventListener("click", () => {
+    game.Action(Direction.Up);
+  });
+  getElem("control-down").addEventListener("click", () => {
+    game.Action(Direction.Down);
+  });
+  getElem("control-left").addEventListener("click", () => {
+    game.Action(Direction.Left);
+  });
+  getElem("control-right").addEventListener("click", () => {
+    game.Action(Direction.Right);
+  });
 
-            for (var i = 0, f; f = files[i]; i++) {
-                var reader = new FileReader();
-                // Closure to capture the file information.
-                reader.onload = (function (theFile) {
-                    return function (e) {
-                        var gameState = e.target.result;
-                        game.InitFromState(gameState);
-                        render.RebuildGraphics();
-                        document.body.focus();
-                    };
-                })(f);
+  getElem("btn-save").addEventListener("click", () => {
+    var gamestate = game.Serialize();
+    var file = new File([gamestate], "game2048.txt", { type: "plain/text" });
+    FileSaver.saveAs(file);
+  });
 
-                // Read in the image file as a data URL.
-                reader.readAsText(f);
-            }
-        }, false);
-    }, 0);
+  getElem("input-load").addEventListener("change", (evt: any) => {
+    var file = evt.target.files[0]; // FileList object
+    var reader = new FileReader();
+    reader.onload = (e: any) => {
+      var gameState = e.target.result;
+      game.InitFromState(gameState);
+      render.RebuildGraphics();
+      document.body.focus();
+    };
+    reader.readAsText(file);
+  });
 }
 
-InitGame();
+(window as any).game2048 = {
+  init: initGame
+};

@@ -6,7 +6,7 @@ export class RowProcessor {
         var valueToMerge = tiles[0].Value;
         var availableCellIndex = tiles[0].Value > 0 ? 1 : 0;
         var resultEvents = <RowProcessionEvent[]>[];
-        var moveEventBeforeMerge: RowProcessionEvent = null;
+        var moveEventBeforeMerge: RowProcessionEvent | undefined = undefined;
 
         for (var ir = 1; ir < tiles.length; ++ir) {
             var current = tiles[ir].Value;
@@ -29,7 +29,7 @@ export class RowProcessor {
 
             // Merge case (accumulatedValue != current)
             // If we do merge after move then
-            if (moveEventBeforeMerge != null) {
+            if (moveEventBeforeMerge) {
                 moveEventBeforeMerge.MergedValue = -1;
             } else {
                 // Fake move event just for deletion 
