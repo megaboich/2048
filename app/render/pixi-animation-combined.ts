@@ -1,70 +1,70 @@
 import { IAnimation } from "./pixi-animation";
 
 export class AnimationParallel implements IAnimation {
-  Animations: IAnimation[] = [];
-  OnCompleted?: () => void;
-  IsCompleted: boolean;
+  animations: IAnimation[] = [];
+  onCompleted?: () => void;
+  isCompleted: boolean;
 
   constructor(animations: IAnimation[], onCompleted?: () => void) {
-    this.Animations = animations;
-    this.OnCompleted = onCompleted;
-    this.IsCompleted = false;
+    this.animations = animations;
+    this.onCompleted = onCompleted;
+    this.isCompleted = false;
   }
 
-  Update(elapsedMs: number): void {
-    if (this.Animations.length == 0) {
+  update(elapsedMs: number): void {
+    if (this.animations.length == 0) {
       return;
     }
 
-    var completedEvents = <Array<() => void>>[];
-    var processedAnimations = this.Animations.filter(
+    const completedEvents = <(() => void)[]>[];
+    const processedAnimations = this.animations.filter(
       (animation: IAnimation) => {
-        animation.Update(elapsedMs);
-        if (animation.IsCompleted && animation.OnCompleted) {
-          completedEvents.push(animation.OnCompleted);
+        animation.update(elapsedMs);
+        if (animation.isCompleted && animation.onCompleted) {
+          completedEvents.push(animation.onCompleted);
         }
-        return !animation.IsCompleted;
+        return !animation.isCompleted;
       }
     );
 
-    this.Animations = processedAnimations;
+    this.animations = processedAnimations;
 
     // call completed events
     completedEvents.forEach(e => e());
 
-    if (this.Animations.length == 0) {
-      this.IsCompleted = true;
+    if (this.animations.length == 0) {
+      this.isCompleted = true;
     }
   }
 }
 
 export class AnimationQueue implements IAnimation {
-  Animations: IAnimation[] = [];
-  OnCompleted?: () => void;
-  IsCompleted: boolean;
+  animations: IAnimation[] = [];
+  onCompleted?: () => void;
+  isCompleted: boolean;
 
   constructor(animations: IAnimation[], onCompleted?: () => void) {
-    this.Animations = animations;
-    this.OnCompleted = onCompleted;
-    this.IsCompleted = false;
+    this.animations = animations;
+    this.onCompleted = onCompleted;
+    this.isCompleted = false;
   }
 
-  Update(elapsedMs: number): void {
-    if (this.Animations.length == 0) {
+  update(elapsedMs: number): void {
+    if (this.animations.length == 0) {
       return;
     }
 
-    var animation = this.Animations[0];
-    animation.Update(elapsedMs);
-    if (animation.IsCompleted) {
-      if (animation.OnCompleted) {
-        animation.OnCompleted();
+    const animation = this.animations[0];
+    animation.update(elapsedMs);
+    if (animation.isCompleted) {
+      if (animation.onCompleted) {
+        animation.onCompleted();
       }
-      this.Animations.splice(0, 1);
+      this.animations.splice(0, 1);
     }
 
-    if (this.Animations.length == 0) {
-      this.IsCompleted = true;
+    if (this.animations.length == 0) {
+      this.isCompleted = true;
     }
   }
 }

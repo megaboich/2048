@@ -1,7 +1,7 @@
-import { IAnimation, AnimationBase } from "./pixi-animation";
+import { AnimationBase, IAnimation } from "./pixi-animation";
 
 export class AnimationFade extends AnimationBase implements IAnimation {
-  TargetOpacity: number;
+  targetOpacity: number;
 
   constructor(
     entity: PIXI.DisplayObject,
@@ -10,21 +10,21 @@ export class AnimationFade extends AnimationBase implements IAnimation {
     onCompleted?: () => void
   ) {
     super(entity, durationInMs, onCompleted);
-    this.TargetOpacity = newOpacity;
+    this.targetOpacity = newOpacity;
   }
 
-  Update(elapsedMs: number): void {
+  update(elapsedMs: number): void {
     if (this.durationRemains > elapsedMs) {
-      var d =
+      const d =
         elapsedMs *
-        (this.TargetOpacity - this.Entity.alpha) /
+        (this.targetOpacity - this.entity.alpha) /
         this.durationRemains;
-      this.Entity.alpha += d;
+      this.entity.alpha += d;
       this.durationRemains -= elapsedMs;
     } else {
       // Here is final call
-      this.Entity.alpha = this.TargetOpacity;
-      this.IsCompleted = true;
+      this.entity.alpha = this.targetOpacity;
+      this.isCompleted = true;
       this.durationRemains = 0;
     }
   }

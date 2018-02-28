@@ -1,32 +1,32 @@
 import * as FileSaver from "file-saver";
 import * as Mousetrap from "mousetrap";
 
-import { Game2048 } from "app/game2048";
+import { Direction } from "app/game/enums";
+import { Game2048 } from "app/game/game2048";
 import { DefaultRandom } from "app/helpers/random";
 import { PixiRender } from "app/render/pixi-game-render";
-import { Direction } from "app/enums";
 
 import "app/styles/style.css";
 
 function initGame() {
-  var game = new Game2048(4, new DefaultRandom());
-  var render = new PixiRender(document, game);
-  game.BindRender(render);
+  const game = new Game2048(4, new DefaultRandom());
+  const render = new PixiRender(document, game);
+  game.bindRender(render);
 
   Mousetrap.bind("up", function() {
-    game.Action(Direction.Up);
+    game.action(Direction.Up);
   });
 
   Mousetrap.bind("down", function() {
-    game.Action(Direction.Down);
+    game.action(Direction.Down);
   });
 
   Mousetrap.bind("left", function() {
-    game.Action(Direction.Left);
+    game.action(Direction.Left);
   });
 
   Mousetrap.bind("right", function() {
-    game.Action(Direction.Right);
+    game.action(Direction.Right);
   });
 
   const getElem = (id: string): HTMLElement => {
@@ -38,31 +38,31 @@ function initGame() {
   };
 
   getElem("control-up").addEventListener("click", () => {
-    game.Action(Direction.Up);
+    game.action(Direction.Up);
   });
   getElem("control-down").addEventListener("click", () => {
-    game.Action(Direction.Down);
+    game.action(Direction.Down);
   });
   getElem("control-left").addEventListener("click", () => {
-    game.Action(Direction.Left);
+    game.action(Direction.Left);
   });
   getElem("control-right").addEventListener("click", () => {
-    game.Action(Direction.Right);
+    game.action(Direction.Right);
   });
 
   getElem("btn-save").addEventListener("click", () => {
-    var gamestate = game.Serialize();
-    var file = new File([gamestate], "game2048.txt", { type: "plain/text" });
+    const gamestate = game.serialize();
+    const file = new File([gamestate], "game2048.txt", { type: "plain/text" });
     FileSaver.saveAs(file);
   });
 
   getElem("input-load").addEventListener("change", (evt: any) => {
-    var file = evt.target.files[0]; // FileList object
-    var reader = new FileReader();
+    const file = evt.target.files[0]; // FileList object
+    const reader = new FileReader();
     reader.onload = (e: any) => {
-      var gameState = e.target.result;
-      game.InitFromState(gameState);
-      render.RebuildGraphics();
+      const gameState = e.target.result;
+      game.initFromState(gameState);
+      render.rebuildGraphics();
       document.body.focus();
     };
     reader.readAsText(file);

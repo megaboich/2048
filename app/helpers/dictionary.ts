@@ -1,60 +1,63 @@
 export interface IDictionary<TKey, TValue> {
-  Add(key: TKey, value: TValue): void;
-  Remove(key: TKey): void;
-  ContainsKey(key: TKey): boolean;
-  Keys(): TKey[];
-  Values(): TValue[];
+  add(key: TKey, value: TValue): void;
+  remove(key: TKey): void;
+  containsKey(key: TKey): boolean;
+  keys(): TKey[];
+  values(): TValue[];
 }
 
 export class Dictionary<TKey, TValue> implements IDictionary<TKey, TValue> {
-  private _keys: TKey[] = [];
-  private _values: TValue[] = [];
+  private keysArray: TKey[] = [];
+  private valuesArray: TValue[] = [];
+  private storageObj: { [key: string]: TValue } = {};
 
   constructor(init: { Key: TKey; Value: TValue }[]) {
-    for (var x = 0; x < init.length; x++) {
-      this.Add(init[x].Key, init[x].Value);
+    for (const rec of init) {
+      this.add(rec.Key, rec.Value);
     }
   }
 
-  Add(key: TKey, value: TValue): void {
-    if ((this as any)[key.toString()] !== undefined) {
-      throw `Item with key ${key} has been already added to dictionary`;
+  add(key: TKey, value: TValue): void {
+    if (this.storageObj[key.toString()] !== undefined) {
+      throw new Error(
+        `Item with key ${key} has been already added to dictionary`
+      );
     }
 
-    (this as any)[key.toString()] = value;
-    this._keys.push(key);
-    this._values.push(value);
+    this.storageObj[key.toString()] = value;
+    this.keysArray.push(key);
+    this.valuesArray.push(value);
   }
 
-  Remove(key: TKey): void {
-    var index = this._keys.indexOf(key, 0);
-    this._keys.splice(index, 1);
-    this._values.splice(index, 1);
+  remove(key: TKey): void {
+    const index = this.keysArray.indexOf(key, 0);
+    this.keysArray.splice(index, 1);
+    this.valuesArray.splice(index, 1);
 
-    delete (this as any)[key.toString()];
+    delete this.storageObj[key.toString()];
   }
 
-  Keys(): TKey[] {
-    return this._keys;
+  keys(): TKey[] {
+    return this.keysArray;
   }
 
-  Values(): TValue[] {
-    return this._values;
+  values(): TValue[] {
+    return this.valuesArray;
   }
 
-  ContainsKey(key: TKey) {
-    if (typeof (this as any)[key.toString()] === "undefined") {
+  containsKey(key: TKey) {
+    if (typeof this.storageObj[key.toString()] === "undefined") {
       return false;
     }
 
     return true;
   }
 
-  Get(key: TKey): TValue {
-    var val = (this as any)[key.toString()];
+  get(key: TKey): TValue {
+    const val = this.storageObj[key.toString()];
     if (val !== undefined) {
       return <TValue>val;
     }
-    throw `Key ${key} is not found in dictionary`;
+    throw new Error(`Key ${key} is not found in dictionary`);
   }
 }

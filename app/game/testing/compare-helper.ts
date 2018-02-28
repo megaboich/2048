@@ -1,5 +1,5 @@
-import { Tile } from "../models";
 import { RowProcessionEvent } from "../events";
+import { Tile } from "../models";
 
 export function compareProcessionEvents(
   actual: RowProcessionEvent[],
@@ -9,24 +9,24 @@ export function compareProcessionEvents(
     expected.length,
     "Length of actual and expected events are not equal"
   );
-  for (var i = 0; i < actual.length; ++i) {
-    var actualEvent = actual[i];
-    var expectedEvent = expected[i];
+  for (let i = 0; i < actual.length; ++i) {
+    const actualEvent = actual[i];
+    const expectedEvent = expected[i];
 
-    expect(actualEvent.NewIndex).toEqual(
-      expectedEvent.NewIndex,
+    expect(actualEvent.newIndex).toEqual(
+      expectedEvent.newIndex,
       "comparison of NewIndex at index " + i
     );
-    expect(actualEvent.OldIndex).toEqual(
-      expectedEvent.OldIndex,
+    expect(actualEvent.oldIndex).toEqual(
+      expectedEvent.oldIndex,
       "comparison of OldIndex at index " + i
     );
-    expect(actualEvent.MergedValue).toEqual(
-      expectedEvent.MergedValue,
+    expect(actualEvent.mergedValue).toEqual(
+      expectedEvent.mergedValue,
       "comparison of MergedValue at index " + i
     );
-    expect(actualEvent.Value).toEqual(
-      expectedEvent.Value,
+    expect(actualEvent.value).toEqual(
+      expectedEvent.value,
       "comparison of OldValue at index " + i
     );
   }
@@ -37,20 +37,20 @@ export function compareTiles(actual: Tile[], expected: Tile[]): void {
     expected.length,
     "Length of actual and expected events are not equal"
   );
-  for (var i = 0; i < actual.length; ++i) {
-    var actualValue = actual[i];
-    var expectedValue = expected[i];
+  for (let i = 0; i < actual.length; ++i) {
+    const actualValue = actual[i];
+    const expectedValue = expected[i];
 
-    expect(actualValue.CellIndex).toEqual(
-      expectedValue.CellIndex,
+    expect(actualValue.cellIndex).toEqual(
+      expectedValue.cellIndex,
       "comparison of CellIndex at index " + i
     );
-    expect(actualValue.RowIndex).toEqual(
-      expectedValue.RowIndex,
+    expect(actualValue.rowIndex).toEqual(
+      expectedValue.rowIndex,
       "comparison of RowIndex at index " + i
     );
-    expect(actualValue.Value).toEqual(
-      expectedValue.Value,
+    expect(actualValue.value).toEqual(
+      expectedValue.value,
       "comparison of Value at index " + i
     );
   }

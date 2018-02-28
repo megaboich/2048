@@ -1,7 +1,7 @@
-import { IAnimation, AnimationBase } from "./pixi-animation";
+import { AnimationBase, IAnimation } from "./pixi-animation";
 
 export class AnimationRotate extends AnimationBase implements IAnimation {
-  TargetRotation: number;
+  targetRotation: number;
 
   constructor(
     entity: PIXI.DisplayObject,
@@ -10,21 +10,21 @@ export class AnimationRotate extends AnimationBase implements IAnimation {
     onCompleted?: () => void
   ) {
     super(entity, durationInMs, onCompleted);
-    this.TargetRotation = entity.rotation + addRotation;
+    this.targetRotation = entity.rotation + addRotation;
   }
 
-  Update(elapsedMs: number): void {
+  update(elapsedMs: number): void {
     if (this.durationRemains > elapsedMs) {
-      var d =
+      const d =
         elapsedMs *
-        (this.TargetRotation - this.Entity.rotation) /
+        (this.targetRotation - this.entity.rotation) /
         this.durationRemains;
-      this.Entity.rotation += d;
+      this.entity.rotation += d;
       this.durationRemains -= elapsedMs;
     } else {
       // Here is final call
-      this.Entity.rotation = this.TargetRotation;
-      this.IsCompleted = true;
+      this.entity.rotation = this.targetRotation;
+      this.isCompleted = true;
       this.durationRemains = 0;
     }
   }

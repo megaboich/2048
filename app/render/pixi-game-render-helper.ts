@@ -1,32 +1,32 @@
-import { Game2048 } from "../game2048";
+import { Game2048 } from "app/game/game2048";
 
 export class TileSprite extends PIXI.Container {
-  TileKey: string = "";
+  tileKey: string = "";
 }
 
 export class RenderHelper {
-  public static TileSize = 50;
-  public static TileSizeHalf = 25;
+  public static tileSize = 50;
+  public static tileSizeHalf = 25;
 
-  public static CreateTileSprite(
+  public static createTileSprite(
     irow: number,
     icell: number,
     tileValue: number,
     key: string
   ): TileSprite {
     //Create graphics for cell
-    var tileSprite = new TileSprite();
-    tileSprite.TileKey = key;
-    tileSprite.width = this.TileSize;
-    tileSprite.height = this.TileSize;
+    const tileSprite = new TileSprite();
+    tileSprite.tileKey = key;
+    tileSprite.width = this.tileSize;
+    tileSprite.height = this.tileSize;
 
-    var tileGraphics = new PIXI.Graphics();
+    const tileGraphics = new PIXI.Graphics();
     tileGraphics.lineStyle(1, 0xe0e0e0, 1);
     tileGraphics.beginFill(this.getTileBgColor(tileValue), 1);
-    tileGraphics.drawRect(0, 0, this.TileSize, this.TileSize);
+    tileGraphics.drawRect(0, 0, this.tileSize, this.tileSize);
     tileGraphics.endFill();
-    tileGraphics.x = -this.TileSizeHalf;
-    tileGraphics.y = -this.TileSizeHalf;
+    tileGraphics.x = -this.tileSizeHalf;
+    tileGraphics.y = -this.tileSizeHalf;
     tileSprite.addChild(tileGraphics);
 
     const style: PIXI.TextStyleOptions = {
@@ -34,60 +34,61 @@ export class RenderHelper {
       fontSize: this.getTileFontSize(tileValue),
       fill: "#" + this.getTileTextColor(tileValue).toString(16)
     };
-    var tileText = new PIXI.Text(tileValue.toString(), style);
-    tileText.x = this.getTileTextXOffset(tileValue) - this.TileSizeHalf;
-    tileText.y = this.getTileTextYOffset(tileValue) - this.TileSizeHalf;
+    const tileText = new PIXI.Text(tileValue.toString(), style);
+    tileText.x = this.getTileTextXOffset(tileValue) - this.tileSizeHalf;
+    tileText.y = this.getTileTextYOffset(tileValue) - this.tileSizeHalf;
     tileSprite.addChild(tileText);
 
     return tileSprite;
   }
 
-  public static CreateScoresText(): PIXI.Text {
+  public static createScoresText(): PIXI.Text {
     const style: PIXI.TextStyleOptions = {
       fontFamily: "Inconsolata, Courier New",
       fontSize: "32px",
       fill: "#776E65"
     };
-    var scoresText = new PIXI.Text("0", style);
-    scoresText.x = this.TileSize;
+    const scoresText = new PIXI.Text("0", style);
+    scoresText.x = this.tileSize;
     scoresText.y = 16;
     return scoresText;
   }
 
-  public static GreateGameOverGraphics(): PIXI.DisplayObject {
+  public static createGameOverGraphics(): PIXI.DisplayObject {
     const style: PIXI.TextStyleOptions = {
       fontFamily: "Inconsolata, Courier New",
       fontSize: "32px",
       fill: "#776E65"
     };
-    var text = new PIXI.Text("GAME OVER", style);
-    text.x = this.TileSize;
+    const text = new PIXI.Text("GAME OVER", style);
+    text.x = this.tileSize;
     text.y = 46;
     return text;
   }
 
-  public static CreateOtherStatic(game: Game2048): PIXI.DisplayObject {
+  public static createOtherStatic(game: Game2048): PIXI.DisplayObject {
     // create frame
-    var size = game.Grid.Size;
-    var frame = new PIXI.Graphics();
-    var border = 8;
+    const size = game.grid.size;
+    const frame = new PIXI.Graphics();
+    const border = 8;
     frame.lineStyle(1, 0xe0e0e0, 1);
     frame.drawRect(
-      this.TileSize * 2 - border,
-      this.TileSize * 2 - border,
-      this.TileSize * size + border + border,
-      this.TileSize * size + border + border
+      this.tileSize * 2 - border,
+      this.tileSize * 2 - border,
+      this.tileSize * size + border + border,
+      this.tileSize * size + border + border
     );
     return frame;
   }
 
-  public static CalculateTileCoordinates(
+  public static setTileCoordinates(
     fig: { x: number; y: number },
     iRow: number,
     iCell: number
   ) {
-    fig.x = this.TileSize * 2 + iCell * this.TileSize + this.TileSizeHalf;
-    fig.y = this.TileSize * 2 + iRow * this.TileSize + this.TileSizeHalf;
+    fig.x = this.tileSize * 2 + iCell * this.tileSize + this.tileSizeHalf;
+    fig.y = this.tileSize * 2 + iRow * this.tileSize + this.tileSizeHalf;
+    return fig;
   }
 
   private static getTileFontSize(value: number): string {

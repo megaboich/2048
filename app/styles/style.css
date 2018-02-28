@@ -1,50 +1,50 @@
 body {
-    background-color: #eFeFeF;
+  background-color: #efefef;
 }
 
 .control {
-    position: absolute;
-    width: 30px;
-    height: 30px;
+  position: absolute;
+  width: 30px;
+  height: 30px;
 }
 
 .control:after {
-    display: inline-block;
-    content: " ";
+  display: inline-block;
+  content: " ";
 }
 
 .control.up {
-    left: 300px;
-    top: 410px;
-    background: url('btn_up.png') no-repeat;
+  left: 300px;
+  top: 410px;
+  background: url("btn_up.png") no-repeat;
 }
 
 .control.down {
-    left: 300px;
-    top: 445px;
-    background: url('btn_down.png') no-repeat;
+  left: 300px;
+  top: 445px;
+  background: url("btn_down.png") no-repeat;
 }
 
 .control.left {
-    left: 265px;
-    top: 445px;
-    background: url('btn_left.png') no-repeat;
+  left: 265px;
+  top: 445px;
+  background: url("btn_left.png") no-repeat;
 }
 
 .control.right {
-    left: 335px;
-    top: 445px;
-    background: url('btn_right.png') no-repeat;
+  left: 335px;
+  top: 445px;
+  background: url("btn_right.png") no-repeat;
 }
 
 #btn-save {
-    position: absolute;
-    left: 50px;
-    top: 410px;
+  position: absolute;
+  left: 50px;
+  top: 410px;
 }
 
 #btn-load {
-    position: absolute;
-    left: 50px;
-    top: 440px;
+  position: absolute;
+  left: 50px;
+  top: 440px;
 }

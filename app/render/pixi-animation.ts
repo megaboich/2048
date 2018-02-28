@@ -1,14 +1,14 @@
 export interface IAnimation {
-  Update(elapsedMs: number): void;
-  IsCompleted: boolean;
-  OnCompleted?: () => void;
+  update(elapsedMs: number): void;
+  isCompleted: boolean;
+  onCompleted?: () => void;
 }
 
 export class AnimationBase {
-  Entity: PIXI.DisplayObject;
-  IsCompleted: boolean;
+  entity: PIXI.DisplayObject;
+  isCompleted: boolean;
   protected durationRemains: number;
-  OnCompleted?: () => void;
+  onCompleted?: () => void;
 
   constructor(
     entity: PIXI.DisplayObject,
@@ -16,11 +16,11 @@ export class AnimationBase {
     onCompleted?: () => void
   ) {
     if (!entity) {
-      throw "Entity is not defined";
+      throw new Error("Entity is not defined");
     }
-    this.Entity = entity;
-    this.OnCompleted = onCompleted;
+    this.entity = entity;
+    this.onCompleted = onCompleted;
     this.durationRemains = durationInMs;
-    this.IsCompleted = false;
+    this.isCompleted = false;
   }
 }

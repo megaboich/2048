@@ -1,15 +1,13 @@
-import { Grid } from "./grid";
-import { Game2048 } from "./game2048";
-import { Direction } from "./enums";
-import { Observable } from "./helpers/observable";
-import { Tile, TilePosition } from "./models";
+import { Direction } from "app/game/enums";
 import {
-  TileUpdateEvent,
-  RowProcessionEvent,
   TileCreatedEvent,
   TileMergeEvent,
   TileMoveEvent
-} from "./events";
+} from "app/game/events";
+import { Game2048 } from "app/game/game2048";
+import { Grid } from "app/game/grid";
+import { TilePosition } from "app/game/models";
+import { Observable } from "app/helpers/observable";
 
 describe("App tests", () => {
   function assertCorrectExistingTile(
@@ -17,11 +15,11 @@ describe("App tests", () => {
     tilePos: TilePosition,
     tileValue: number = -1
   ) {
-    var tile = grid.GetTile(tilePos.RowIndex, tilePos.CellIndex);
+    const tile = grid.getTile(tilePos.rowIndex, tilePos.cellIndex);
     if (tileValue >= 0) {
-      expect(tile.Value).toEqual(tileValue, "Tile value is not expected");
+      expect(tile.value).toEqual(tileValue, "Tile value is not expected");
     } else {
-      expect(tile.Value).toBeGreaterThan(
+      expect(tile.value).toBeGreaterThan(
         0,
         "Tile value should be greater than zero"
       );
@@ -29,36 +27,38 @@ describe("App tests", () => {
   }
 
   function applyMove(grid: Grid, event: TileMoveEvent) {
-    assertCorrectExistingTile(grid, event.Position, event.Value);
+    assertCorrectExistingTile(grid, event.position, event.value);
 
-    grid.RemoveTileByPos(event.Position);
-    grid.UpdateTileByPos(event.NewPosition, event.Value);
+    grid.removeTileByPos(event.position);
+    grid.updateTileByPos(event.newPosition, event.value);
   }
 
   function applyMerge(grid: Grid, event: TileMergeEvent) {
-    assertCorrectExistingTile(grid, event.Position);
+    assertCorrectExistingTile(grid, event.position);
 
-    grid.RemoveTileByPos(event.Position);
-    grid.UpdateTileByPos(event.TilePosToMergeWith, event.NewValue);
+    grid.removeTileByPos(event.position);
+    grid.updateTileByPos(event.tilePosToMergeWith, event.newValue);
   }
 
   function applyNew(grid: Grid, event: TileCreatedEvent) {
-    assertCorrectExistingTile(grid, event.Position, 0);
+    assertCorrectExistingTile(grid, event.position, 0);
 
-    grid.InsertTileByPos(event.Position, event.TileValue);
+    grid.insertTileByPos(event.position, event.tileValue);
   }
 
   function buildTestGame(grid: Grid): Game2048 {
-    var game = new Game2048(4, {
-      GetRandomNumber: () => {
+    const game = new Game2048(4, {
+      getRandomNumber: () => {
         return 0;
       }
     });
-    game.Grid = Grid.Deserialize(grid.Serialize());
-    var onTurnAnimationsCompleted = new Observable<void>();
-    game.BindRender({
-      OnGameFinished: () => {},
-      OnTilesUpdated: event => {
+    game.grid = Grid.deserialize(grid.serialize());
+    const onTurnAnimationsCompleted = new Observable<void>();
+    game.bindRender({
+      onGameFinished: () => {
+        /**/
+      },
+      onTilesUpdated: event => {
         if (event instanceof TileMoveEvent) {
           applyMove(grid, <TileMoveEvent>event);
         } else if (event instanceof TileMergeEvent) {
@@ -67,28 +67,28 @@ describe("App tests", () => {
           applyNew(grid, <TileCreatedEvent>event);
         }
       },
-      OnTurnAnimationsCompleted: onTurnAnimationsCompleted
+      onTurnAnimationsCompleted: onTurnAnimationsCompleted
     });
     return game;
   }
 
   it("Game situation test 1", () => {
-    var testGrid = Grid.Deserialize("2,4,0,0|0,0,0,0|2,0,0,2|0,0,0,0");
-    var game = buildTestGame(testGrid);
-    game.Action(Direction.Right);
+    const testGrid = Grid.deserialize("2,4,0,0|0,0,0,0|2,0,0,2|0,0,0,0");
+    const game = buildTestGame(testGrid);
+    game.action(Direction.Right);
 
-    var resultGrid = game.Grid.Serialize();
+    const resultGrid = game.grid.serialize();
     expect(resultGrid).toBe("2,0,2,4|0,0,0,0|0,0,0,4|0,0,0,0");
-    expect(testGrid.Serialize()).toBe(resultGrid);
+    expect(testGrid.serialize()).toBe(resultGrid);
   });
 
   it("Game situation test 2", () => {
-    var testGrid = Grid.Deserialize("0,2,2,0|0,0,0,0|0,0,2,0|0,0,0,0");
-    var game = buildTestGame(testGrid);
-    game.Action(Direction.Left);
+    const testGrid = Grid.deserialize("0,2,2,0|0,0,0,0|0,0,2,0|0,0,0,0");
+    const game = buildTestGame(testGrid);
+    game.action(Direction.Left);
 
-    var resultGrid = game.Grid.Serialize();
+    const resultGrid = game.grid.serialize();
     expect(resultGrid).toBe("4,2,0,0|0,0,0,0|2,0,0,0|0,0,0,0");
-    expect(testGrid.Serialize()).toBe(resultGrid);
+    expect(testGrid.serialize()).toBe(resultGrid);
   });
 });

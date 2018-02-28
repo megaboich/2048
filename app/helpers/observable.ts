@@ -1,21 +1,21 @@
-
 export class Observable<T> {
-    private observers: ((eventArgs: T) => void)[] = [];
+  private observers: ((eventArgs: T) => void)[] = [];
 
-    constructor() {
-    }
+  constructor() {
+    /**/
+  }
 
-    RegisterObserver(observer: (eventArgs: T) => void): void {
-        this.observers.push(observer);
-    }
+  addObserver(observer: (eventArgs: T) => void): void {
+    this.observers.push(observer);
+  }
 
-    RemoveObserver(observer: (eventArgs: T) => void): void {
-        this.observers.splice(this.observers.indexOf(observer), 1);
-    }
+  removeObserver(observer: (eventArgs: T) => void): void {
+    this.observers.splice(this.observers.indexOf(observer), 1);
+  }
 
-    NotifyObservers(arg: T): void {
-        this.observers.forEach(observer => {
-            observer(arg);
-        });
-    }
+  notify(arg: T): void {
+    this.observers.forEach(observer => {
+      observer(arg);
+    });
+  }
 }

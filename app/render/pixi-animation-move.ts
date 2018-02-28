@@ -1,4 +1,4 @@
-import { IAnimation, AnimationBase } from "./pixi-animation";
+import { AnimationBase, IAnimation } from "./pixi-animation";
 
 export interface EntityPosition {
   x: number;
@@ -6,7 +6,7 @@ export interface EntityPosition {
 }
 
 export class AnimationMove extends AnimationBase implements IAnimation {
-  TargetPosition: EntityPosition;
+  targetPosition: EntityPosition;
 
   constructor(
     entity: PIXI.DisplayObject,
@@ -15,28 +15,28 @@ export class AnimationMove extends AnimationBase implements IAnimation {
     onCompleted?: () => void
   ) {
     super(entity, durationInMs, onCompleted);
-    this.TargetPosition = newPosition;
+    this.targetPosition = newPosition;
   }
 
-  Update(elapsedMs: number): void {
+  update(elapsedMs: number): void {
     if (this.durationRemains > elapsedMs) {
       // Calculate dx and dy
-      var dx =
+      const dx =
         elapsedMs *
-        (this.TargetPosition.x - this.Entity.x) /
+        (this.targetPosition.x - this.entity.x) /
         this.durationRemains;
-      var dy =
+      const dy =
         elapsedMs *
-        (this.TargetPosition.y - this.Entity.y) /
+        (this.targetPosition.y - this.entity.y) /
         this.durationRemains;
-      this.Entity.x += dx;
-      this.Entity.y += dy;
+      this.entity.x += dx;
+      this.entity.y += dy;
       this.durationRemains -= elapsedMs;
     } else {
       // Here is final call
-      this.Entity.x = this.TargetPosition.x;
-      this.Entity.y = this.TargetPosition.y;
-      this.IsCompleted = true;
+      this.entity.x = this.targetPosition.x;
+      this.entity.y = this.targetPosition.y;
+      this.isCompleted = true;
       this.durationRemains = 0;
     }
   }

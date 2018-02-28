@@ -7,20 +7,20 @@
 // ${cwd}: the current working directory of the spawned process
 
 {
-	"version": "0.1.0",
-	"command": "\"CMD /C ${workspaceRoot}/node_modules/.bin/gulp.cmd\" ",
-	"isShellCommand": true,
-	"problemMatcher": "$gulp-tsc",
-    "tasks": [
-		{
-            "isBuildCommand": true,
-			"taskName": "debug",
-			"showOutput": "always"
-		},
-        {
-            "isTestCommand": true,
-			"taskName": "run_tests",
-			"showOutput": "always"
-		}
-	]
+  "version": "0.1.0",
+  "command": "\"CMD /C ${workspaceRoot}/node_modules/.bin/gulp.cmd\" ",
+  "isShellCommand": true,
+  "problemMatcher": "$gulp-tsc",
+  "tasks": [
+    {
+      "isBuildCommand": true,
+      "taskName": "debug",
+      "showOutput": "always"
+    },
+    {
+      "isTestCommand": true,
+      "taskName": "run_tests",
+      "showOutput": "always"
+    }
+  ]
 }

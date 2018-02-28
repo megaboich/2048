@@ -1,27 +1,24 @@
 import * as PIXI from "pixi.js";
 
-import { IGame2048Render, Game2048 } from "../game2048";
-import { Observable } from "../helpers/observable";
-import { Dictionary } from "../helpers/dictionary";
-import { TileSprite, RenderHelper } from "./pixi-game-render-helper";
-import { AnimationsManager } from "./pixi-animation-manager";
-import { AnimationQueue } from "./pixi-animation-combined";
-import { AnimationMove, EntityPosition } from "./pixi-animation-move";
-import { AnimationScale } from "./pixi-animation-scale";
-import { AnimationFade } from "./pixi-animation-fade";
-import { AnimationDelay } from "./pixi-animation-delay";
-import { TilePosition, Tile } from "../models";
 import {
-  TileUpdateEvent,
-  RowProcessionEvent,
   TileCreatedEvent,
   TileMergeEvent,
-  TileMoveEvent
-} from "../events";
+  TileMoveEvent,
+  TileUpdateEvent
+} from "app/game/events";
+import { Game2048, IGame2048Render } from "app/game/game2048";
+import { TilePosition } from "app/game/models";
+import { Dictionary } from "app/helpers/dictionary";
+import { Observable } from "app/helpers/observable";
+import { AnimationQueue } from "app/render/pixi-animation-combined";
+import { AnimationDelay } from "app/render/pixi-animation-delay";
+import { AnimationFade } from "app/render/pixi-animation-fade";
+import { AnimationsManager } from "app/render/pixi-animation-manager";
+import { AnimationMove } from "app/render/pixi-animation-move";
+import { AnimationScale } from "app/render/pixi-animation-scale";
+import { RenderHelper, TileSprite } from "app/render/pixi-game-render-helper";
 
 export class PixiRender implements IGame2048Render {
-  OnTurnAnimationsCompleted: Observable<void> = new Observable<void>();
-
   private stage: PIXI.Container;
   private tiles: Dictionary<string, TileSprite> = new Dictionary<
     string,
@@ -34,42 +31,44 @@ export class PixiRender implements IGame2048Render {
   private animationsManager: AnimationsManager;
   private gameOverRendered?: boolean;
 
+  public onTurnAnimationsCompleted: Observable<void> = new Observable<void>();
+
   constructor(document: Document, game: Game2048) {
     this.game = game;
 
-    var renderer = PIXI.autoDetectRenderer(400, 400, {
+    const renderer = PIXI.autoDetectRenderer(400, 400, {
       backgroundColor: 0xefefef
     });
     document.body.appendChild(renderer.view);
 
     // create the root of the scene graph
     this.stage = new PIXI.Container();
-    this.RebuildGraphics();
+    this.rebuildGraphics();
 
     this.animationsManager = new AnimationsManager(() =>
       this.onAnimationsCompleted()
     );
 
-    var ticker = new PIXI.ticker.Ticker();
+    const ticker = new PIXI.ticker.Ticker();
     ticker.add(() => {
-      this.animationsManager.Update(ticker.elapsedMS);
+      this.animationsManager.update(ticker.elapsedMS);
 
       renderer.render(this.stage);
-      this.scoresText.text = game.Scores.toString();
+      this.scoresText.text = game.scores.toString();
       this.fpsText.text = ticker.FPS.toFixed(2);
     });
     ticker.start();
   }
 
-  RebuildGraphics(): void {
+  rebuildGraphics(): void {
     this.gameOverRendered = false;
     this.rebuildStaticObjects();
     this.rebuildDynamicObjects();
   }
 
-  OnGameFinished() {
+  onGameFinished() {
     if (!this.gameOverRendered) {
-      var gog = RenderHelper.GreateGameOverGraphics();
+      const gog = RenderHelper.createGameOverGraphics();
       if (this.staticRoot) {
         this.staticRoot.addChild(gog);
       }
@@ -77,7 +76,7 @@ export class PixiRender implements IGame2048Render {
     this.gameOverRendered = true;
   }
 
-  OnTilesUpdated(event: TileUpdateEvent) {
+  onTilesUpdated(event: TileUpdateEvent) {
     if (!event) {
       // No tiles were moved
       this.animationsManager.AddAnimation(
@@ -88,25 +87,24 @@ export class PixiRender implements IGame2048Render {
       );
     }
     if (event instanceof TileMoveEvent) {
-      var moveEvent = <TileMoveEvent>event;
-      var tileToMove = this.tiles.Get(this.getTileKey(moveEvent.Position));
+      const moveEvent = <TileMoveEvent>event;
+      const tileToMove = this.tiles.get(this.getTileKey(moveEvent.position));
       this.unregisterTile(tileToMove);
       this.bringToFront(tileToMove);
-      var newPos = <EntityPosition>{};
-      RenderHelper.CalculateTileCoordinates(
-        newPos,
-        moveEvent.NewPosition.RowIndex,
-        moveEvent.NewPosition.CellIndex
+      const newPos = RenderHelper.setTileCoordinates(
+        { x: 0, y: 0 },
+        moveEvent.newPosition.rowIndex,
+        moveEvent.newPosition.cellIndex
       );
 
       this.animationsManager.AddAnimation(
         new AnimationMove(tileToMove, 150, newPos, () => {
           this.removeTileGraphics(tileToMove);
-          if (!moveEvent.ShouldBeDeleted) {
-            var newTile = this.addTileGraphics(
-              moveEvent.NewPosition.RowIndex,
-              moveEvent.NewPosition.CellIndex,
-              moveEvent.Value
+          if (!moveEvent.shouldBeDeleted) {
+            const newTile = this.addTileGraphics(
+              moveEvent.newPosition.rowIndex,
+              moveEvent.newPosition.cellIndex,
+              moveEvent.value
             );
             this.registerTile(newTile);
           } else {
@@ -115,24 +113,23 @@ export class PixiRender implements IGame2048Render {
         })
       );
     } else if (event instanceof TileMergeEvent) {
-      var mergeEvent = <TileMergeEvent>event;
-      var tileToMove = this.tiles.Get(this.getTileKey(mergeEvent.Position));
+      const mergeEvent = <TileMergeEvent>event;
+      const tileToMove = this.tiles.get(this.getTileKey(mergeEvent.position));
       this.unregisterTile(tileToMove);
       this.bringToFront(tileToMove);
-      var newPos = <EntityPosition>{};
-      RenderHelper.CalculateTileCoordinates(
-        newPos,
-        mergeEvent.TilePosToMergeWith.RowIndex,
-        mergeEvent.TilePosToMergeWith.CellIndex
+      const newPos = RenderHelper.setTileCoordinates(
+        { x: 0, y: 0 },
+        mergeEvent.tilePosToMergeWith.rowIndex,
+        mergeEvent.tilePosToMergeWith.cellIndex
       );
 
       this.animationsManager.AddAnimation(
         new AnimationMove(tileToMove, 150, newPos, () => {
           this.removeTileGraphics(tileToMove);
-          var newTile = this.addTileGraphics(
-            mergeEvent.TilePosToMergeWith.RowIndex,
-            mergeEvent.TilePosToMergeWith.CellIndex,
-            mergeEvent.NewValue
+          const newTile = this.addTileGraphics(
+            mergeEvent.tilePosToMergeWith.rowIndex,
+            mergeEvent.tilePosToMergeWith.cellIndex,
+            mergeEvent.newValue
           );
           this.registerTile(newTile);
           this.animationsManager.AddAnimation(
@@ -144,11 +141,11 @@ export class PixiRender implements IGame2048Render {
         })
       );
     } else if (event instanceof TileCreatedEvent) {
-      var createdEvent = <TileCreatedEvent>event;
-      var newTile = this.addTileGraphics(
-        createdEvent.Position.RowIndex,
-        createdEvent.Position.CellIndex,
-        createdEvent.TileValue
+      const createdEvent = <TileCreatedEvent>event;
+      const newTile = this.addTileGraphics(
+        createdEvent.position.rowIndex,
+        createdEvent.position.cellIndex,
+        createdEvent.tileValue
       );
       this.registerTile(newTile);
       newTile.alpha = 0;
@@ -167,7 +164,7 @@ export class PixiRender implements IGame2048Render {
     console.log("Animations completed!!");
 
     //this.rebuildDynamicObjects();
-    this.OnTurnAnimationsCompleted.NotifyObservers(undefined);
+    this.onTurnAnimationsCompleted.notify(undefined);
   }
 
   private rebuildStaticObjects() {
@@ -178,10 +175,10 @@ export class PixiRender implements IGame2048Render {
     this.staticRoot = new PIXI.Container();
     this.stage.addChild(this.staticRoot);
 
-    var otherStatic = RenderHelper.CreateOtherStatic(this.game);
+    const otherStatic = RenderHelper.createOtherStatic(this.game);
     this.staticRoot.addChild(otherStatic);
 
-    this.scoresText = RenderHelper.CreateScoresText();
+    this.scoresText = RenderHelper.createScoresText();
     this.staticRoot.addChild(this.scoresText);
 
     const style: PIXI.TextStyleOptions = {
@@ -197,27 +194,27 @@ export class PixiRender implements IGame2048Render {
 
   private rebuildDynamicObjects() {
     // Update scores
-    this.scoresText.text = this.game.Scores.toString();
+    this.scoresText.text = this.game.scores.toString();
 
     // Remove existing tiles
-    this.tiles.Values().forEach(element => {
+    this.tiles.values().forEach(element => {
       this.stage.removeChild(element);
     });
 
     this.stage.children.forEach(item => {
       if (item instanceof TileSprite) {
-        console.log("Found not deleted " + (<TileSprite>item).TileKey);
+        console.log("Found not deleted " + (<TileSprite>item).tileKey);
       }
     });
 
     this.tiles = new Dictionary<string, TileSprite>([]);
 
     // Add tiles from game grid
-    for (var irow = 0; irow < this.game.Grid.Size; ++irow) {
-      for (var icell = 0; icell < this.game.Grid.Size; ++icell) {
-        var tileValue = this.game.Grid.Cells[irow][icell];
+    for (let irow = 0; irow < this.game.grid.size; ++irow) {
+      for (let icell = 0; icell < this.game.grid.size; ++icell) {
+        const tileValue = this.game.grid.cells[irow][icell];
         if (tileValue != 0) {
-          var tile = this.addTileGraphics(irow, icell, tileValue);
+          const tile = this.addTileGraphics(irow, icell, tileValue);
           this.registerTile(tile);
         }
       }
@@ -225,12 +222,12 @@ export class PixiRender implements IGame2048Render {
   }
 
   private registerTile(tile: TileSprite): void {
-    this.tiles.Add(tile.TileKey, tile);
+    this.tiles.add(tile.tileKey, tile);
   }
 
   private unregisterTile(tile: TileSprite): void {
-    var key = tile.TileKey;
-    this.tiles.Remove(key);
+    const key = tile.tileKey;
+    this.tiles.remove(key);
     console.log("unregistered " + key);
   }
 
@@ -247,21 +244,21 @@ export class PixiRender implements IGame2048Render {
     icell: number,
     tileValue: number
   ): TileSprite {
-    var tileKey = this.getTileKey({ RowIndex: irow, CellIndex: icell });
-    var tileGraphics = RenderHelper.CreateTileSprite(
+    const tileKey = this.getTileKey({ rowIndex: irow, cellIndex: icell });
+    const tileGraphics = RenderHelper.createTileSprite(
       irow,
       icell,
       tileValue,
       tileKey
     );
-    RenderHelper.CalculateTileCoordinates(tileGraphics, irow, icell);
+    RenderHelper.setTileCoordinates(tileGraphics, irow, icell);
     this.stage.addChild(tileGraphics);
     return tileGraphics;
   }
 
   private bringToFront(tile: PIXI.DisplayObject) {
     if (tile) {
-      var p = tile.parent;
+      const p = tile.parent;
       if (p) {
         p.removeChild(tile);
         p.addChild(tile);
@@ -270,6 +267,6 @@ export class PixiRender implements IGame2048Render {
   }
 
   private getTileKey(pos: TilePosition): string {
-    return pos.RowIndex.toString() + "_" + pos.CellIndex.toString();
+    return pos.rowIndex.toString() + "_" + pos.cellIndex.toString();
   }
 }

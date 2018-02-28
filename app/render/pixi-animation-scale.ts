@@ -1,7 +1,7 @@
-import { IAnimation, AnimationBase } from "./pixi-animation";
+import { AnimationBase, IAnimation } from "./pixi-animation";
 
 export class AnimationScale extends AnimationBase implements IAnimation {
-  TargetScale: number;
+  targetScale: number;
 
   constructor(
     entity: PIXI.DisplayObject,
@@ -10,23 +10,23 @@ export class AnimationScale extends AnimationBase implements IAnimation {
     onCompleted?: () => void
   ) {
     super(entity, durationInMs, onCompleted);
-    this.TargetScale = newScale;
+    this.targetScale = newScale;
   }
 
-  Update(elapsedMs: number): void {
+  update(elapsedMs: number): void {
     if (this.durationRemains > elapsedMs) {
-      var d =
+      const d =
         elapsedMs *
-        (this.TargetScale - this.Entity.scale.x) /
+        (this.targetScale - this.entity.scale.x) /
         this.durationRemains;
-      this.Entity.scale.x += d;
-      this.Entity.scale.y += d;
+      this.entity.scale.x += d;
+      this.entity.scale.y += d;
       this.durationRemains -= elapsedMs;
     } else {
       // Here is final call
-      this.Entity.scale.x = this.TargetScale;
-      this.Entity.scale.y = this.TargetScale;
-      this.IsCompleted = true;
+      this.entity.scale.x = this.targetScale;
+      this.entity.scale.y = this.targetScale;
+      this.isCompleted = true;
       this.durationRemains = 0;
     }
   }
