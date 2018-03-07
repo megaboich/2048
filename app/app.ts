@@ -1,3 +1,4 @@
+import "core-js";
 import * as FileSaver from "file-saver";
 import * as Mousetrap from "mousetrap";
 

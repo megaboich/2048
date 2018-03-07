@@ -8,7 +8,6 @@ import {
 } from "app/game/events";
 import { Game2048, IGame2048Render } from "app/game/game2048";
 import { TilePosition } from "app/game/models";
-import { Dictionary } from "app/helpers/dictionary";
 import { Observable } from "app/helpers/observable";
 import { AnimationQueue } from "app/render/pixi-animation-combined";
 import { AnimationDelay } from "app/render/pixi-animation-delay";
@@ -20,10 +19,7 @@ import { RenderHelper, TileSprite } from "app/render/pixi-game-render-helper";
 
 export class PixiRender implements IGame2048Render {
   private stage: PIXI.Container;
-  private tiles: Dictionary<string, TileSprite> = new Dictionary<
-    string,
-    TileSprite
-  >([]);
+  private tiles = new Map<string, TileSprite>();
   private scoresText: PIXI.Text = undefined as any; // Is initialized in constructor
   private fpsText: PIXI.Text = undefined as any; // Is initialized in constructor
   private staticRoot: PIXI.Container = undefined as any; // Is initialized in constructor
@@ -89,6 +85,9 @@ export class PixiRender implements IGame2048Render {
     if (event instanceof TileMoveEvent) {
       const moveEvent = <TileMoveEvent>event;
       const tileToMove = this.tiles.get(this.getTileKey(moveEvent.position));
+      if (!tileToMove) {
+        return;
+      }
       this.unregisterTile(tileToMove);
       this.bringToFront(tileToMove);
       const newPos = RenderHelper.setTileCoordinates(
@@ -115,6 +114,9 @@ export class PixiRender implements IGame2048Render {
     } else if (event instanceof TileMergeEvent) {
       const mergeEvent = <TileMergeEvent>event;
       const tileToMove = this.tiles.get(this.getTileKey(mergeEvent.position));
+      if (!tileToMove) {
+        return;
+      }
       this.unregisterTile(tileToMove);
       this.bringToFront(tileToMove);
       const newPos = RenderHelper.setTileCoordinates(
@@ -197,7 +199,7 @@ export class PixiRender implements IGame2048Render {
     this.scoresText.text = this.game.scores.toString();
 
     // Remove existing tiles
-    this.tiles.values().forEach(element => {
+    this.tiles.forEach(element => {
       this.stage.removeChild(element);
     });
 
@@ -207,7 +209,7 @@ export class PixiRender implements IGame2048Render {
       }
     });
 
-    this.tiles = new Dictionary<string, TileSprite>([]);
+    this.tiles = new Map<string, TileSprite>();
 
     // Add tiles from game grid
     for (let irow = 0; irow < this.game.grid.size; ++irow) {
@@ -222,13 +224,12 @@ export class PixiRender implements IGame2048Render {
   }
 
   private registerTile(tile: TileSprite): void {
-    this.tiles.add(tile.tileKey, tile);
+    this.tiles.set(tile.tileKey, tile);
   }
 
   private unregisterTile(tile: TileSprite): void {
     const key = tile.tileKey;
-    this.tiles.remove(key);
-    console.log("unregistered " + key);
+    this.tiles.delete(key);
   }
 
   private removeTileGraphics(tile: TileSprite) {

@@ -21,7 +21,13 @@ module.exports = function(env) {
     },
     module: {
       rules: [
-        { test: /\.ts$/, loader: "ts-loader" },
+        {
+          test: /\.ts$/,
+          loader: "awesome-typescript-loader",
+          options: {
+            target: isProduction ? "es5" : "es2017"
+          }
+        },
         { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
         {
           test: /\.(png|jpg|jpeg|gif|svg|woff)$/,
