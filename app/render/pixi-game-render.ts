@@ -35,7 +35,11 @@ export class PixiRender implements IGame2048Render {
     const renderer = PIXI.autoDetectRenderer(400, 400, {
       backgroundColor: 0xefefef
     });
-    document.body.appendChild(renderer.view);
+    const canvasContainer = document.getElementById("canvas-container");
+    if (!canvasContainer) {
+      throw new Error("Canvas container is not found");
+    }
+    canvasContainer.appendChild(renderer.view);
 
     // create the root of the scene graph
     this.stage = new PIXI.Container();
