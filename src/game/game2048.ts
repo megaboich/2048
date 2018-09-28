@@ -1,5 +1,5 @@
-import { Observable } from "app/helpers/observable";
-import { IRandom } from "app/helpers/random";
+import { Observable } from "helpers/observable";
+import { IRandom } from "helpers/random";
 
 import { Direction } from "./enums";
 import {

@@ -9,15 +9,15 @@ module.exports = function(env) {
   const webpackConfig = {
     mode: isProduction ? "production" : "development",
     entry: {
-      app: "./app/app.ts",
-      tests: "./app/tests.js"
+      app: "./src/app.ts",
+      tests: "./src/tests.js"
     },
     output: {
       path: path.join(__dirname, "/dist")
     },
     resolve: {
       extensions: [".ts", ".js"],
-      modules: [__dirname, "node_modules"]
+      modules: [path.join(__dirname, "/src"), "node_modules"]
     },
     module: {
       rules: [
@@ -38,12 +38,12 @@ module.exports = function(env) {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: "app/index.html",
+        template: "src/index.html",
         filename: "index.html",
         chunks: ["app"]
       }),
       new HtmlWebpackPlugin({
-        template: "app/tests.html",
+        template: "src/tests.html",
         filename: "tests.html"
       })
     ],

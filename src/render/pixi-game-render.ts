@@ -5,17 +5,17 @@ import {
   TileMergeEvent,
   TileMoveEvent,
   TileUpdateEvent
-} from "app/game/events";
-import { Game2048, IGame2048Render } from "app/game/game2048";
-import { TilePosition } from "app/game/models";
-import { Observable } from "app/helpers/observable";
-import { AnimationQueue } from "app/render/pixi-animation-combined";
-import { AnimationDelay } from "app/render/pixi-animation-delay";
-import { AnimationFade } from "app/render/pixi-animation-fade";
-import { AnimationsManager } from "app/render/pixi-animation-manager";
-import { AnimationMove } from "app/render/pixi-animation-move";
-import { AnimationScale } from "app/render/pixi-animation-scale";
-import { RenderHelper, TileSprite } from "app/render/pixi-game-render-helper";
+} from "game/events";
+import { Game2048, IGame2048Render } from "game/game2048";
+import { TilePosition } from "game/models";
+import { Observable } from "helpers/observable";
+import { AnimationQueue } from "render/pixi-animation-combined";
+import { AnimationDelay } from "render/pixi-animation-delay";
+import { AnimationFade } from "render/pixi-animation-fade";
+import { AnimationsManager } from "render/pixi-animation-manager";
+import { AnimationMove } from "render/pixi-animation-move";
+import { AnimationScale } from "render/pixi-animation-scale";
+import { RenderHelper, TileSprite } from "render/pixi-game-render-helper";
 
 export class PixiRender implements IGame2048Render {
   private stage: PIXI.Container;

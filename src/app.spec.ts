@@ -1,13 +1,13 @@
-import { Direction } from "app/game/enums";
+import { Direction } from "game/enums";
 import {
   TileCreatedEvent,
   TileMergeEvent,
   TileMoveEvent
-} from "app/game/events";
-import { Game2048 } from "app/game/game2048";
-import { Grid } from "app/game/grid";
-import { TilePosition } from "app/game/models";
-import { Observable } from "app/helpers/observable";
+} from "game/events";
+import { Game2048 } from "game/game2048";
+import { Grid } from "game/grid";
+import { TilePosition } from "game/models";
+import { Observable } from "helpers/observable";
 
 describe("App tests", () => {
   function assertCorrectExistingTile(

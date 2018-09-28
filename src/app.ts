@@ -2,12 +2,12 @@ import "core-js";
 import * as FileSaver from "file-saver";
 import * as Mousetrap from "mousetrap";
 
-import { Direction } from "app/game/enums";
-import { Game2048 } from "app/game/game2048";
-import { DefaultRandom } from "app/helpers/random";
-import { PixiRender } from "app/render/pixi-game-render";
+import { Direction } from "game/enums";
+import { Game2048 } from "game/game2048";
+import { DefaultRandom } from "helpers/random";
+import { PixiRender } from "render/pixi-game-render";
 
-import "app/styles/style.css";
+import "styles/style.css";
 
 function initGame() {
   const game = new Game2048(4, new DefaultRandom());

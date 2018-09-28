@@ -1,4 +1,4 @@
-import { Game2048 } from "app/game/game2048";
+import { Game2048 } from "game/game2048";
 
 export class TileSprite extends PIXI.Container {
   tileKey: string = "";

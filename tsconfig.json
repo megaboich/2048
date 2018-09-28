@@ -3,7 +3,7 @@
     "target": "es2017",
     "module": "es2015",
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "sourceMap": true,
     "inlineSourceMap": false,
     "removeComments": false,
