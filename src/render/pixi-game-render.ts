@@ -7,7 +7,7 @@ import {
   TileUpdateEvent
 } from "game/events";
 import { Game2048, IGame2048Render } from "game/game2048";
-import { TilePosition } from "game/models";
+import { TilePosition } from "game/tile";
 import { Observable } from "helpers/observable";
 import { AnimationQueue } from "render/pixi-animation-combined";
 import { AnimationDelay } from "render/pixi-animation-delay";

@@ -1,5 +1,5 @@
 import { RowProcessionEvent } from "./events";
-import { Tile } from "./models";
+import { Tile } from "./tile";
 
 export class RowProcessor {
   static ProcessRow(tiles: Tile[]): RowProcessionEvent[] {

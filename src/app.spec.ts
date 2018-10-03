@@ -6,7 +6,7 @@ import {
 } from "game/events";
 import { Game2048 } from "game/game2048";
 import { Grid } from "game/grid";
-import { TilePosition } from "game/models";
+import { TilePosition } from "game/tile";
 import { Observable } from "helpers/observable";
 
 describe("App tests", () => {

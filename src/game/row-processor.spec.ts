@@ -1,5 +1,5 @@
 import { RowProcessionEvent } from "./events";
-import { Tile } from "./models";
+import { Tile } from "./tile";
 import { RowProcessor } from "./row-processor";
 import { compareProcessionEvents } from "./testing/compare-helper";
 
@@ -7,7 +7,7 @@ describe("Row Processor tests", () => {
   function buildTestTiles(values: number[]): Tile[] {
     const result = <Tile[]>[];
     for (let i = 0; i < values.length; ++i) {
-      result.push(new Tile(i, 0, values[i]));
+      result.push({ rowIndex: i, cellIndex: 0, value: values[i] });
     }
     return result;
   }

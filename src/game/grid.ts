@@ -1,5 +1,5 @@
 import { Direction } from "./enums";
-import { Tile, TilePosition } from "./models";
+import { Tile, TilePosition } from "./tile";
 
 export class Grid {
   size: number;
@@ -70,7 +70,9 @@ export class Grid {
     }
 
     if (this.cells[irow][icell] != 0) {
-      throw new Error("Cell with position " + irow + ", " + icell + " is occupied");
+      throw new Error(
+        "Cell with position " + irow + ", " + icell + " is occupied"
+      );
     }
 
     this.cells[irow][icell] = value;
@@ -85,7 +87,11 @@ export class Grid {
   }
 
   public getTile(irow: number, icell: number): Tile {
-    return new Tile(irow, icell, this.cells[irow][icell]);
+    return {
+      rowIndex: irow,
+      cellIndex: icell,
+      value: this.cells[irow][icell]
+    };
   }
 
   public updateTileByPos(pos: TilePosition, newValue: number) {
@@ -98,7 +104,7 @@ export class Grid {
     for (let irow = 0; irow < this.size; ++irow) {
       for (let icell = 0; icell < this.size; ++icell) {
         if (this.cells[irow][icell] == 0) {
-          availPositions.push(new TilePosition(irow, icell));
+          availPositions.push({ rowIndex: irow, cellIndex: icell });
         }
       }
     }

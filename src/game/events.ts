@@ -1,4 +1,4 @@
-import { TilePosition } from "./models";
+import { TilePosition } from "./tile";
 
 export class RowProcessionEvent {
   oldIndex: number;
@@ -18,11 +18,11 @@ export class RowProcessionEvent {
     this.value = value;
   }
 
-  IsDeleted(): boolean {
+  isDeleted(): boolean {
     return this.mergedValue < 0;
   }
 
-  IsMerged(): boolean {
+  isMerged(): boolean {
     return this.mergedValue > 0;
   }
 }

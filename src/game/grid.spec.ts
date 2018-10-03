@@ -1,6 +1,6 @@
 import { Direction } from "./enums";
 import { Grid } from "./grid";
-import { Tile } from "./models";
+import { Tile, buildTile } from "./tile";
 import { compareTiles } from "./testing/compare-helper";
 
 describe("Grid state", () => {
@@ -82,10 +82,10 @@ describe("Grid get data by direction", () => {
     const g = Grid.deserialize("1,2|3,4");
     const rowData = g.getRowDataByDirection(Direction.Left);
 
-    const _1 = new Tile(0, 0, 1);
-    const _2 = new Tile(0, 1, 2);
-    const _3 = new Tile(1, 0, 3);
-    const _4 = new Tile(1, 1, 4);
+    const _1 = buildTile(0, 0, 1);
+    const _2 = buildTile(0, 1, 2);
+    const _3 = buildTile(1, 0, 3);
+    const _4 = buildTile(1, 1, 4);
 
     compareTiles(rowData[0], [_1, _2]);
     compareTiles(rowData[1], [_3, _4]);
@@ -95,10 +95,10 @@ describe("Grid get data by direction", () => {
     const g = Grid.deserialize("1,2|3,4");
     const rowData = g.getRowDataByDirection(Direction.Right);
 
-    const _1 = new Tile(0, 0, 1);
-    const _2 = new Tile(0, 1, 2);
-    const _3 = new Tile(1, 0, 3);
-    const _4 = new Tile(1, 1, 4);
+    const _1 = buildTile(0, 0, 1);
+    const _2 = buildTile(0, 1, 2);
+    const _3 = buildTile(1, 0, 3);
+    const _4 = buildTile(1, 1, 4);
 
     compareTiles(rowData[0], [_2, _1]);
     compareTiles(rowData[1], [_4, _3]);
@@ -108,10 +108,10 @@ describe("Grid get data by direction", () => {
     const g = Grid.deserialize("1,2|3,4");
     const rowData = g.getRowDataByDirection(Direction.Up);
 
-    const _1 = new Tile(0, 0, 1);
-    const _2 = new Tile(0, 1, 2);
-    const _3 = new Tile(1, 0, 3);
-    const _4 = new Tile(1, 1, 4);
+    const _1 = buildTile(0, 0, 1);
+    const _2 = buildTile(0, 1, 2);
+    const _3 = buildTile(1, 0, 3);
+    const _4 = buildTile(1, 1, 4);
 
     compareTiles(rowData[0], [_1, _3]);
     compareTiles(rowData[1], [_2, _4]);
@@ -121,10 +121,10 @@ describe("Grid get data by direction", () => {
     const g = Grid.deserialize("1,2|3,4");
     const rowData = g.getRowDataByDirection(Direction.Down);
 
-    const _1 = new Tile(0, 0, 1);
-    const _2 = new Tile(0, 1, 2);
-    const _3 = new Tile(1, 0, 3);
-    const _4 = new Tile(1, 1, 4);
+    const _1 = buildTile(0, 0, 1);
+    const _2 = buildTile(0, 1, 2);
+    const _3 = buildTile(1, 0, 3);
+    const _4 = buildTile(1, 1, 4);
 
     compareTiles(rowData[0], [_3, _1]);
     compareTiles(rowData[1], [_4, _2]);

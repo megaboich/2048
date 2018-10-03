@@ -9,7 +9,7 @@ import {
   TileUpdateEvent
 } from "./events";
 import { Grid } from "./grid";
-import { Tile } from "./models";
+import { Tile } from "./tile";
 import { RowProcessor } from "./row-processor";
 
 export interface IGame2048Render {
@@ -89,7 +89,7 @@ export class Game2048 {
       for (const rowEvent of rowEvents) {
         const oldPos = row[rowEvent.oldIndex];
         const newPos = row[rowEvent.newIndex];
-        if (rowEvent.IsMerged()) {
+        if (rowEvent.isMerged()) {
           allEvents.push(
             new TileMergeEvent(oldPos, newPos, rowEvent.mergedValue)
           );
@@ -99,7 +99,7 @@ export class Game2048 {
               oldPos,
               newPos,
               rowEvent.value,
-              rowEvent.IsDeleted()
+              rowEvent.isDeleted()
             )
           );
         }
@@ -143,9 +143,7 @@ export class Game2048 {
       if (!newTile) {
         throw new Error("New title must be inserted somewhere!");
       }
-      this.onTilesUpdated.notify(
-        new TileCreatedEvent(newTile, newTile.value)
-      );
+      this.onTilesUpdated.notify(new TileCreatedEvent(newTile, newTile.value));
     } else {
       this.onTilesUpdated.notify(undefined); // Dummy event - just indicator that user made his action without movements
 
@@ -173,7 +171,11 @@ export class Game2048 {
     if (availTitles.length > 0) {
       const ti = this.rand.getRandomNumber(availTitles.length);
       const pos = availTitles[ti];
-      const tile = new Tile(pos.rowIndex, pos.cellIndex, 2);
+      const tile: Tile = {
+        rowIndex: pos.rowIndex,
+        cellIndex: pos.cellIndex,
+        value: 2
+      };
       this.grid.insertTileByPos(tile, tile.value);
       return tile;
     }
