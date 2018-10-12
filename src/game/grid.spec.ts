@@ -1,7 +1,6 @@
 import { Direction } from "./enums";
 import { Grid } from "./grid";
-import { Tile, buildTile } from "./tile";
-import { compareTiles } from "./testing/compare-helper";
+import { buildTile } from "./tile";
 
 describe("Grid state", () => {
   it("Empty grid serializaion", () => {
@@ -87,8 +86,8 @@ describe("Grid get data by direction", () => {
     const _3 = buildTile(1, 0, 3);
     const _4 = buildTile(1, 1, 4);
 
-    compareTiles(rowData[0], [_1, _2]);
-    compareTiles(rowData[1], [_3, _4]);
+    expect(rowData[0]).toEqual([_1, _2]);
+    expect(rowData[1]).toEqual([_3, _4]);
   });
 
   it("Right", () => {
@@ -100,8 +99,8 @@ describe("Grid get data by direction", () => {
     const _3 = buildTile(1, 0, 3);
     const _4 = buildTile(1, 1, 4);
 
-    compareTiles(rowData[0], [_2, _1]);
-    compareTiles(rowData[1], [_4, _3]);
+    expect(rowData[0]).toEqual([_2, _1]);
+    expect(rowData[1]).toEqual([_4, _3]);
   });
 
   it("Up", () => {
@@ -113,8 +112,8 @@ describe("Grid get data by direction", () => {
     const _3 = buildTile(1, 0, 3);
     const _4 = buildTile(1, 1, 4);
 
-    compareTiles(rowData[0], [_1, _3]);
-    compareTiles(rowData[1], [_2, _4]);
+    expect(rowData[0]).toEqual([_1, _3]);
+    expect(rowData[1]).toEqual([_2, _4]);
   });
 
   it("Down", () => {
@@ -126,7 +125,7 @@ describe("Grid get data by direction", () => {
     const _3 = buildTile(1, 0, 3);
     const _4 = buildTile(1, 1, 4);
 
-    compareTiles(rowData[0], [_3, _1]);
-    compareTiles(rowData[1], [_4, _2]);
+    expect(rowData[0]).toEqual([_3, _1]);
+    expect(rowData[1]).toEqual([_4, _2]);
   });
 });

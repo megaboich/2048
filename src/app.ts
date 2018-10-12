@@ -1,75 +1,61 @@
-import "core-js";
-import * as FileSaver from "file-saver";
+import "core-js/es6/promise";
 import * as Mousetrap from "mousetrap";
 
 import { Direction } from "game/enums";
 import { Game2048 } from "game/game2048";
 import { DefaultRandom } from "helpers/random";
-import { PixiRender } from "render/pixi-game-render";
+import { RenderConsole } from "render-console/render-console-main";
 
-import "styles/style.css";
+import "./app.css";
 
-function initGame() {
+async function gameMain() {
   const game = new Game2048(4, new DefaultRandom());
-  const render = new PixiRender(document, game);
-  game.bindRender(render);
+  const render = new RenderConsole(game);
 
   Mousetrap.bind("up", function() {
-    game.action(Direction.Up);
+    game.queueAction({ type: "MOVE", direction: Direction.Up });
   });
 
   Mousetrap.bind("down", function() {
-    game.action(Direction.Down);
+    game.queueAction({ type: "MOVE", direction: Direction.Down });
   });
 
   Mousetrap.bind("left", function() {
-    game.action(Direction.Left);
+    game.queueAction({ type: "MOVE", direction: Direction.Left });
   });
 
   Mousetrap.bind("right", function() {
-    game.action(Direction.Right);
+    game.queueAction({ type: "MOVE", direction: Direction.Right });
   });
 
-  const getElem = (id: string): HTMLElement => {
-    const elem = document.getElementById(id);
-    if (!elem) {
-      throw new Error("Can't find element by id: " + id);
-    }
-    return elem;
-  };
+  await render.init();
+  game.queueAction({ type: "START" });
+  while (true) {
+    const gameUpdates = await game.processAction();
+    await render.update(gameUpdates);
+  }
 
-  getElem("control-up").addEventListener("click", () => {
-    game.action(Direction.Up);
-  });
-  getElem("control-down").addEventListener("click", () => {
-    game.action(Direction.Down);
-  });
-  getElem("control-left").addEventListener("click", () => {
-    game.action(Direction.Left);
-  });
-  getElem("control-right").addEventListener("click", () => {
-    game.action(Direction.Right);
-  });
-
-  getElem("btn-save").addEventListener("click", () => {
+  /*
     const gamestate = game.serialize();
     const file = new File([gamestate], "game2048.txt", { type: "plain/text" });
     FileSaver.saveAs(file);
-  });
+  */
 
+  /*
   getElem("input-load").addEventListener("change", (evt: any) => {
     const file = evt.target.files[0]; // FileList object
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const gameState = e.target.result;
       game.initFromState(gameState);
-      render.rebuildGraphics();
+      render.onInit();
       document.body.focus();
     };
     reader.readAsText(file);
   });
+  */
 }
 
 (window as any).game2048 = {
-  init: initGame
+  init: gameMain
 };

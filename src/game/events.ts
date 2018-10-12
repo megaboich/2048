@@ -1,78 +1,34 @@
-import { TilePosition } from "./tile";
+import { TilePosition, Tile } from "./tile";
 
-export class RowProcessionEvent {
-  oldIndex: number;
-  newIndex: number;
-  value: number;
-  mergedValue: number;
+export class GameEvent {}
 
+export class TileMergeEvent extends GameEvent {
   constructor(
-    oldIndex: number,
-    newIndex: number,
-    value: number,
-    mergedValue: number = 0
+    public oldPosition: TilePosition,
+    public mergePosition: TilePosition,
+    public newValue: number
   ) {
-    this.oldIndex = oldIndex;
-    this.newIndex = newIndex;
-    this.mergedValue = mergedValue;
-    this.value = value;
-  }
-
-  isDeleted(): boolean {
-    return this.mergedValue < 0;
-  }
-
-  isMerged(): boolean {
-    return this.mergedValue > 0;
+    super();
   }
 }
 
-export class TileUpdateEvent {
-  position: TilePosition;
-
-  constructor(position: TilePosition) {
-    this.position = position;
-  }
-}
-
-export class TileMergeEvent extends TileUpdateEvent {
-  tilePosToMergeWith: TilePosition;
-  newValue: number;
-
+export class TileMoveEvent extends GameEvent {
   constructor(
-    oldPosition: TilePosition,
-    mergePosition: TilePosition,
-    newValue: number
+    public oldPosition: TilePosition,
+    public newPosition: TilePosition,
+    public value: number,
+    public shouldBeDeleted: boolean
   ) {
-    super(oldPosition);
-    this.tilePosToMergeWith = mergePosition;
-    this.newValue = newValue;
+    super();
   }
 }
 
-export class TileMoveEvent extends TileUpdateEvent {
-  newPosition: TilePosition;
-  value: number;
-  shouldBeDeleted: boolean;
-
-  constructor(
-    oldPosition: TilePosition,
-    newPosition: TilePosition,
-    value: number,
-    shouldBeDeleted: boolean
-  ) {
-    super(oldPosition);
-    this.newPosition = newPosition;
-    this.value = value;
-    this.shouldBeDeleted = shouldBeDeleted;
+export class TileCreatedEvent extends GameEvent {
+  constructor(public tile: Tile) {
+    super();
   }
 }
 
-export class TileCreatedEvent extends TileUpdateEvent {
-  tileValue: number;
+export class TilesNotMovedEvent extends GameEvent {}
 
-  constructor(position: TilePosition, tileValue: number) {
-    super(position);
-    this.tileValue = tileValue;
-  }
-}
+export class GameOverEvent extends GameEvent {}

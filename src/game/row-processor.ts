@@ -1,12 +1,28 @@
-import { RowProcessionEvent } from "./events";
 import { Tile } from "./tile";
 
+export class TileUpdateEvent {
+  constructor(
+    public oldIndex: number,
+    public newIndex: number,
+    public value: number,
+    public mergedValue: number = 0
+  ) {}
+
+  get isDeleted(): boolean {
+    return this.mergedValue < 0;
+  }
+
+  get isMerged(): boolean {
+    return this.mergedValue > 0;
+  }
+}
+
 export class RowProcessor {
-  static ProcessRow(tiles: Tile[]): RowProcessionEvent[] {
+  static ProcessRow(tiles: Tile[]): TileUpdateEvent[] {
     let valueToMerge = tiles[0].value;
     let availableCellIndex = tiles[0].value > 0 ? 1 : 0;
-    const resultEvents = <RowProcessionEvent[]>[];
-    let moveEventBeforeMerge: RowProcessionEvent | undefined = undefined;
+    const resultEvents = <TileUpdateEvent[]>[];
+    let moveEventBeforeMerge: TileUpdateEvent | undefined = undefined;
 
     for (let ir = 1; ir < tiles.length; ++ir) {
       const current = tiles[ir].value;
@@ -19,7 +35,7 @@ export class RowProcessor {
       if (valueToMerge != current) {
         if (ir > availableCellIndex) {
           // Move case
-          moveEventBeforeMerge = new RowProcessionEvent(
+          moveEventBeforeMerge = new TileUpdateEvent(
             ir,
             availableCellIndex,
             current
@@ -38,7 +54,7 @@ export class RowProcessor {
       } else {
         // Fake move event just for deletion
         resultEvents.push(
-          new RowProcessionEvent(
+          new TileUpdateEvent(
             availableCellIndex - 1,
             availableCellIndex - 1,
             current,
@@ -47,7 +63,7 @@ export class RowProcessor {
         );
       }
       resultEvents.push(
-        new RowProcessionEvent(
+        new TileUpdateEvent(
           ir,
           availableCellIndex - 1,
           current,
