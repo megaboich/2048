@@ -5,12 +5,14 @@ import { Direction } from "game/enums";
 import { Game2048 } from "game/game2048";
 import { DefaultRandom } from "helpers/random";
 import { RenderConsole } from "render-console/render-console-main";
+import { RenderSVG } from "render-svg/render-svg-main";
 
 import "./app.css";
 
 async function gameMain() {
   const game = new Game2048(4, new DefaultRandom());
-  const render = new RenderConsole(game);
+  const renderConsole = new RenderConsole(game);
+  const renderSVG = new RenderSVG(game);
 
   Mousetrap.bind("up", function() {
     game.queueAction({ type: "MOVE", direction: Direction.Up });
@@ -28,11 +30,14 @@ async function gameMain() {
     game.queueAction({ type: "MOVE", direction: Direction.Right });
   });
 
-  await render.init();
+  await await Promise.all([renderConsole.init(), renderSVG.init()]);
   game.queueAction({ type: "START" });
   while (true) {
     const gameUpdates = await game.processAction();
-    await render.update(gameUpdates);
+    await Promise.all([
+      renderConsole.update(gameUpdates),
+      renderSVG.update(gameUpdates)
+    ]);
   }
 
   /*

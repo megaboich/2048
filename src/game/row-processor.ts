@@ -21,7 +21,7 @@ export class RowProcessor {
   static ProcessRow(tiles: Tile[]): TileUpdateEvent[] {
     let valueToMerge = tiles[0].value;
     let availableCellIndex = tiles[0].value > 0 ? 1 : 0;
-    const resultEvents = <TileUpdateEvent[]>[];
+    const resultEvents: TileUpdateEvent[] = [];
     let moveEventBeforeMerge: TileUpdateEvent | undefined = undefined;
 
     for (let ir = 1; ir < tiles.length; ++ir) {
