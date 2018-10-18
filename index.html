@@ -1,44 +1,26 @@
 <!doctype html>
-<html>
+
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Game-2048-typescript by megaboich</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>2048</title>
 </head>
 
 <body>
-    <div class="wrapper">
-        <header>
-            <h1>Game-2048-typescript</h1>
-            <p>Game2048 implemented in TypeScript</p>
-
-            <p class="view"><a href="https://github.com/megaboich/game-2048-typescript">View the Project on GitHub <small>megaboich/game-2048-typescript</small></a></p>
-
-            <ul>
-                <li><a href="https://github.com/megaboich/game-2048-typescript/zipball/master">Download <strong>ZIP File</strong></a></li>
-                <li><a href="https://github.com/megaboich/game-2048-typescript/tarball/master">Download <strong>TAR Ball</strong></a></li>
-                <li><a href="https://github.com/megaboich/game-2048-typescript">View On <strong>GitHub</strong></a></li>
-            </ul>
-        </header>
-        <section>
-            <iframe src="frame-content/index.html" width="100%" height="600" scrolling="no" frameborder="no"></iframe>
-
-        </section>
-        <footer>
-            <p>This project is maintained by <a href="https://github.com/megaboich">megaboich</a></p>
-            <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-        </footer>
+    <div id="drawing"></div>
+    <div id="controls">
+        <button type="button" id="btn-up" />
+        <button type="button" id="btn-left" />
+        <button type="button" id="btn-right" />
+        <button type="button" id="btn-down" />
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+<script type="text/javascript" src="app.js"></script></body>
 
-</body>
+<script>
+    game2048.init();
+</script>
 
 </html>
