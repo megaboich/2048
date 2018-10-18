@@ -1,0 +1,59 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #efefef;
+}
+
+#drawing {
+  padding-top: 2rem;
+}
+
+#controls {
+  width: 240px;
+  height: 176px;
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+
+  button {
+    width: 80px;
+    height: 80px;
+    border-radius: 1000px;
+    border: none;
+    background-color: white;
+    background-image: url("./images/arrow.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+
+    &#btn-up {
+      transform: rotate(-90deg);
+      position: absolute;
+      left: 80px;
+      top: 0px;
+    }
+    &#btn-left {
+      transform: rotate(-180deg);
+      position: absolute;
+      left: 0px;
+      top: 48px;
+    }
+    &#btn-right {
+      position: absolute;
+      right: 0px;
+      top: 48px;
+    }
+    &#btn-down {
+      transform: rotate(90deg);
+      position: absolute;
+      left: 80px;
+      bottom: 0px;
+    }
+  }
+}
