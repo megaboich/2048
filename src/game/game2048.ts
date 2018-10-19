@@ -21,7 +21,7 @@ export interface IGameState {
 }
 
 export class Game2048 {
-  private _scores: number = 0;
+  private scores: number = 0;
   public grid: Grid;
   private userActionsQueue: Action[] = [];
 
@@ -29,13 +29,13 @@ export class Game2048 {
     this.grid = new Grid(size);
   }
 
-  public get scores() {
-    return this._scores;
+  public getScores() {
+    return this.scores;
   }
 
   public serialize(): string {
     const state: IGameState = {
-      scores: this._scores,
+      scores: this.scores,
       gridSerialized: this.grid.serialize()
     };
     return JSON.stringify(state);
@@ -43,7 +43,7 @@ export class Game2048 {
 
   public initFromState(gameState: string): void {
     const state: IGameState = JSON.parse(gameState);
-    this._scores = state.scores;
+    this.scores = state.scores;
     this.grid = Grid.deserialize(state.gridSerialized);
   }
 
@@ -118,7 +118,7 @@ export class Game2048 {
       if (event instanceof TileMergeEvent) {
         this.grid.updateTileByPos(event.mergePosition, event.newValue);
         this.grid.removeTileByPos(event.oldPosition);
-        this._scores += event.newValue;
+        this.scores += event.newValue;
       }
     }
 

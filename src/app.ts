@@ -67,7 +67,7 @@ async function gameMain() {
     }
   });
 
-  await await Promise.all([renderConsole.init(), renderSVG.init()]);
+  await Promise.all([renderConsole.init(), renderSVG.init()]);
   game.queueAction({ type: "START" });
   while (true) {
     const gameUpdates = await game.processAction();

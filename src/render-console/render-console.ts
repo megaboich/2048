@@ -28,7 +28,7 @@ export class RenderConsole {
 
   private render(events: GameEvent[]): void {
     this.console.write("Score: ");
-    this.console.write(`${this.game.scores}`, {
+    this.console.write(`${this.game.getScores()}`, {
       color: "aqua",
       bgColor: "black"
     });

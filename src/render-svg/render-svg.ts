@@ -7,7 +7,7 @@ import {
   TileMoveEvent
 } from "game/events";
 import { Game2048 } from "game/game2048";
-import { Tile, TilePosition } from "game/tile";
+import { TilePosition } from "game/tile";
 import { ensure } from "helpers/syntax";
 import { stay } from "helpers/async";
 
@@ -29,7 +29,7 @@ export class RenderSVG {
   private svg?: SVG.Doc;
   private gridSize: number = 4;
 
-  constructor(private game: Game2048) {
+  constructor(game: Game2048) {
     this.gridSize = game.grid.size;
   }
 
@@ -74,10 +74,9 @@ export class RenderSVG {
       group.move(pos.x, pos.y);
       const innerG = group.group();
       const colors = this.getTileColors(event.tile.value);
-      const rect = innerG
-        .rect(cellSize, cellSize)
-        .fill(colors.bgColor)
-        .stroke({ width: 2, color: "#efefef" });
+      const rect = innerG.rect(cellSize, cellSize);
+      rect.fill(colors.bgColor);
+      rect.stroke({ width: 2, color: "#efefef" });
       const text = innerG.text(event.tile.value.toString());
       text.font({ size: 30 });
       text.fill(colors.color);
