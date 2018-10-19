@@ -1,4 +1,4 @@
-export const animationDelay =200;
+export const animationDelay =120;
 export const cellSize = 70;
 
 export type ColorDic = { [key: number]: string | undefined };

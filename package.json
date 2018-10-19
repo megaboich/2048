@@ -8,9 +8,11 @@
     "build": "webpack --env.prod=true",
     "build-dev": "webpack",
     "start": "webpack-dev-server",
+    "test": "karma start",
     "prettier": "prettier --write \"**/*.{ts,js,json,css,less}\"",
     "tslint": "tslint --project . --format verbose",
-    "tslint-fix": "tslint --project . --format verbose --fix"
+    "tslint-fix": "tslint --project . --format verbose --fix",
+    "deploy": "yarn build && gh-pages -d dist --repo https://github.com/megaboich/2048.git --branch gh-pages"
   },
   "dependencies": {
     "core-js": "2.5.7",
@@ -31,6 +33,11 @@
     "html-webpack-plugin": "3.2.0",
     "husky": "1.1.1",
     "jasmine-core": "3.2.1",
+    "karma": "3.0.0",
+    "karma-brief-reporter": "0.0.7",
+    "karma-chrome-launcher": "2.2.0",
+    "karma-jasmine": "1.1.2",
+    "karma-webpack": "3.0.5",
     "less": "3.8.1",
     "less-loader": "4.1.0",
     "lint-staged": "7.3.0",
