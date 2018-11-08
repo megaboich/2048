@@ -8,6 +8,9 @@ import { DefaultRandom } from "helpers/random";
 import { RenderConsole } from "render-console/render-console";
 import { RenderSVG } from "render-svg/render-svg";
 
+import "normalize.css";
+import "./images/_icons.less";
+import "./main-menu.less";
 import "./app.less";
 import { ensure } from "helpers/syntax";
 
@@ -41,6 +44,12 @@ async function gameMain() {
   ensure(document.getElementById("btn-right")).addEventListener(
     "click",
     moveAction(Direction.Right)
+  );
+  ensure(document.getElementById("btn-new-game")).addEventListener(
+    "click",
+    function() {
+      game.queueAction({ type: "START" });
+    }
   );
 
   const hammer = new Hammer(document.body, {

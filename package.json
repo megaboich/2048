@@ -19,6 +19,7 @@
     "file-saver": "1.3.3",
     "hammerjs": "2.0.8",
     "mousetrap": "1.6.2",
+    "normalize.css": "8.0.0",
     "svg.js": "2.6.6",
     "tslib": "1.9.3"
   },

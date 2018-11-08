@@ -7,27 +7,30 @@ body {
   margin: 0;
   padding: 0;
   background-color: #efefef;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #drawing {
-  padding-top: 2rem;
+  padding-top: 4rem;
 }
 
+@btn-size: 60px;
+
 #controls {
-  width: 240px;
-  height: 176px;
+  width: @btn-size * 3;
+  height: @btn-size * 2.2;
   margin-top: 2rem;
   margin-left: auto;
   margin-right: auto;
   position: relative;
 
   button {
-    width: 80px;
-    height: 80px;
+    width: @btn-size;
+    height: @btn-size;
     border-radius: 1000px;
     border: none;
     background-color: white;
-    background-image: url("./images/arrow.svg");
+    background-image: url("./images/arrowhead-pointing-to-the-right.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50%;
@@ -35,24 +38,24 @@ body {
     &#btn-up {
       transform: rotate(-90deg);
       position: absolute;
-      left: 80px;
+      left: @btn-size;
       top: 0px;
     }
     &#btn-left {
       transform: rotate(-180deg);
       position: absolute;
       left: 0px;
-      top: 48px;
+      top: @btn-size * 0.6;
     }
     &#btn-right {
       position: absolute;
       right: 0px;
-      top: 48px;
+      top: @btn-size * 0.6;
     }
     &#btn-down {
       transform: rotate(90deg);
       position: absolute;
-      left: 80px;
+      left: @btn-size;
       bottom: 0px;
     }
   }

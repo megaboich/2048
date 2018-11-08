@@ -66,6 +66,7 @@ export class Game2048 {
       gameEvents.push(...this.processMoveAction(action.direction));
     }
     if (action.type === "START") {
+      this.scores = 0;
       const newTile = this.insertNewTileToVacantSpace();
       if (newTile) {
         gameEvents.push(new TileCreatedEvent(newTile));
