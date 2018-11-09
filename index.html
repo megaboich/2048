@@ -1,37 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>2048</title>
-</head>
+  </head>
 
-<body>
-    <header class="main-menu">
-        <span id="logo">2048 game</span>
-        <nav>
-            <a href="#" id="menu-icon"></a>
-            <ul>
-                <li><a href="#" id="btn-new-game"><icon class="refresh-arrow is-small"></icon>New game</a></li>
-                <li><a href="https://github.com/megaboich/2048"><icon class="github-character is-small"></icon>About</a></li>
-            </ul>
-        </nav>
-    </header>
+  <body>
+    <div id="loading-indicator">Loading...</div>
+    <div id="game-content" style="visibility: hidden">
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <span class="navbar-item has-text-weight-bold"> 2048 Game </span>
+          <a
+            role="button"
+            class="navbar-burger burger"
+            aria-label="menu"
+            aria-expanded="false"
+            data-target="navbarBasicExample"
+          >
+            <span aria-hidden="true"></span> <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
 
-    <div id="drawing"></div>
-    <div id="controls">
-        <button type="button" id="btn-up" />
-        <button type="button" id="btn-left" />
-        <button type="button" id="btn-right" />
-        <button type="button" id="btn-down" />
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-end">
+            <a class="navbar-item" href="#" id="btn-new-game">
+              <span class="icon is-large">
+                <span class="oi" data-glyph="reload"></span>
+              </span>
+              New game
+            </a>
+            <a class="navbar-item" href="#" id="btn-about">
+              <span class="icon is-large">
+                <span class="oi" data-glyph="info"></span>
+              </span>
+              About
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="modal" id="modal-about">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">About</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="content">
+              <p>
+                2048 is a single-player sliding block puzzle game. You need to
+                move blocks in order to combine the same tiles. The goal is to
+                reach 2048 or a maximum you can.
+              </p>
+              <p>
+                It is yet another implementation of
+                <a href="https://github.com/gabrielecirulli/2048">2048 game</a>
+                initially written by Gabriele Cirulli.
+              </p>
+              <p>
+                You can find more information about this game also on
+                <a href="https://en.wikipedia.org/wiki/2048_(video_game)"
+                  >Wikipedia</a
+                >.
+              </p>
+              <p>
+                This version of a game is implemented as open source software.
+                Main repository is located on
+                <a href="https://github.com/megaboich/2048">Github</a>.
+              </p>
+              <p>Used 3rd party assets:</p>
+              <ul>
+                <li>
+                  CSS framework
+                  <a href="https://github.com/jgthms/bulma">Bulma</a>.
+                </li>
+                <li>
+                  Icon font
+                  <a href="https://github.com/iconic/open-iconic">Open iconic</a
+                  >.
+                </li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div id="drawing"></div>
+      <div id="controls">
+        <button type="button" id="btn-up">
+          <span class="icon has-text-grey">
+            <span class="oi" data-glyph="caret-top"></span>
+          </span>
+        </button>
+        <button type="button" id="btn-left">
+          <span class="icon has-text-grey">
+            <span class="oi" data-glyph="caret-left"></span
+          ></span>
+        </button>
+        <button type="button" id="btn-right">
+          <span class="icon has-text-grey">
+            <span class="oi" data-glyph="caret-right"></span>
+          </span>
+        </button>
+        <button type="button" id="btn-down">
+          <span class="icon has-text-grey">
+            <span class="oi" data-glyph="caret-bottom"></span>
+          </span>
+        </button>
+      </div>
     </div>
-<script type="text/javascript" src="app.js"></script></body>
+  <script type="text/javascript" src="app.js"></script></body>
 
-<script>
+  <script>
     game2048.init();
-</script>
-
+  </script>
 </html>
