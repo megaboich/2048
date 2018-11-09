@@ -40,8 +40,8 @@ export class RenderSVG {
     }
     drawingElt.innerHTML = "";
     this.svg = SVG(drawingElt).size(
-      cellSize * this.gridSize,
-      cellSize * this.gridSize
+      cellSize * this.gridSize + 10,
+      cellSize * this.gridSize + 10
     );
     this.svg.addClass("render-svg");
     this.tiles = {};

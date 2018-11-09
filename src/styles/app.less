@@ -11,7 +11,7 @@ body {
 }
 
 #drawing {
-  padding-top: 4rem;
+  padding-top: 1rem;
 }
 
 @btn-size: 60px;
@@ -30,19 +30,13 @@ body {
     border-radius: 1000px;
     border: none;
     background-color: white;
-    background-image: url("./images/arrowhead-pointing-to-the-right.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 50%;
 
     &#btn-up {
-      transform: rotate(-90deg);
       position: absolute;
       left: @btn-size;
       top: 0px;
     }
     &#btn-left {
-      transform: rotate(-180deg);
       position: absolute;
       left: 0px;
       top: @btn-size * 0.6;
@@ -53,7 +47,6 @@ body {
       top: @btn-size * 0.6;
     }
     &#btn-down {
-      transform: rotate(90deg);
       position: absolute;
       left: @btn-size;
       bottom: 0px;

@@ -7,14 +7,23 @@ import { Game2048 } from "game/game2048";
 import { DefaultRandom } from "helpers/random";
 import { RenderConsole } from "render-console/render-console";
 import { RenderSVG } from "render-svg/render-svg";
-
-import "normalize.css";
-import "./images/_icons.less";
-import "./main-menu.less";
-import "./app.less";
 import { ensure } from "helpers/syntax";
 
+import {
+  enableNavbarToggle,
+  toggleMainNavbar,
+  triggerModal
+} from "styles/bulma-helpers";
+
+import "styles/bulma.min.css";
+import "styles/open-iconic.css";
+import "styles/app.less";
+
 async function gameMain() {
+  enableNavbarToggle();
+  ensure(document.getElementById("loading-indicator")).remove();
+  ensure(document.getElementById("game-content")).style.visibility = "visible";
+
   const game = new Game2048(4, new DefaultRandom());
   const renderConsole = new RenderConsole(game);
   const renderSVG = new RenderSVG(game);
@@ -49,6 +58,14 @@ async function gameMain() {
     "click",
     function() {
       game.queueAction({ type: "START" });
+      toggleMainNavbar();
+    }
+  );
+  ensure(document.getElementById("btn-about")).addEventListener(
+    "click",
+    function() {
+      toggleMainNavbar();
+      triggerModal("modal-about");
     }
   );
 
