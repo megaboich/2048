@@ -1,18 +1,20 @@
 # 2048 Game
 
-This is just a fun project to get my hands to work with some technologies.
+2048 is a single-player sliding block puzzle game. You need to
+move blocks in order to combine the same tiles. The goal is to
+reach 2048 or a maximum you can.
+
+This is just another implementation of [2048 Game](https://github.com/gabrielecirulli/2048) initially written by Gabriele Cirulli.
+Fun project to get my hands to work with some technologies.
+
+![Demo](2048-demo.gif)
 
 Demo is deployed here: [https://megaboich.github.io/2048/](https://megaboich.github.io/2048/).
 
-List of used technologies:
-* TypeScript
-* Webpack
-* SVG.js
+Used 3rd party technologies and assets:
 
-To start development server:
-```
-yarn start
-```
-
-Icons made by [Dave Gandy](https://www.flaticon.com/authors/dave-gandy) from [www.flaticon.com](https://www.flaticon.com/)
-is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+- SVG manipulation and animation library [SVG.js](https://github.com/svgdotjs/svg.js)
+- Icon font [Open iconic](https://github.com/iconic/open-iconic)
+- CSS framework [Bulma](https://github.com/jgthms/bulma)
+- [TypeScript](https://github.com/Microsoft/TypeScript)
+- [Webpack](https://github.com/webpack/webpack)

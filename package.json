@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Game 2048",
   "author": "Oleksandr Boiko",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "build": "webpack --env.prod=true",
     "build-dev": "webpack",
