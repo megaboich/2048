@@ -19,6 +19,8 @@ import "styles/bulma.min.css";
 import "styles/open-iconic.css";
 import "styles/app.less";
 
+const GAME_STATE_LOCALSTORAGE_KEY = "game_state_11";
+
 async function gameMain() {
   enableNavbarToggle();
   ensure(document.getElementById("loading-indicator")).remove();
@@ -57,7 +59,7 @@ async function gameMain() {
   ensure(document.getElementById("btn-new-game")).addEventListener(
     "click",
     function() {
-      game.queueAction({ type: "START" });
+      game.queueAction({ type: "START", serializedState: "" });
       toggleMainNavbar();
     }
   );
@@ -94,9 +96,15 @@ async function gameMain() {
   });
 
   await Promise.all([renderConsole.init(), renderSVG.init()]);
-  game.queueAction({ type: "START" });
+  game.queueAction({
+    type: "START",
+    serializedState:
+      window.localStorage.getItem(GAME_STATE_LOCALSTORAGE_KEY) || ""
+  });
   while (true) {
     const gameUpdates = await game.processAction();
+    const serializedState = game.serialize();
+    window.localStorage.setItem(GAME_STATE_LOCALSTORAGE_KEY, serializedState);
     await Promise.all([
       renderConsole.update(gameUpdates),
       renderSVG.update(gameUpdates)

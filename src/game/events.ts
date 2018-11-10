@@ -1,4 +1,5 @@
 import { TilePosition, Tile } from "./tile";
+import { Direction } from "./enums";
 
 export class GameEvent {}
 
@@ -29,6 +30,18 @@ export class TileCreatedEvent extends GameEvent {
   }
 }
 
-export class TilesNotMovedEvent extends GameEvent {}
+export class TileDeletedEvent extends GameEvent {
+  constructor(public position: TilePosition) {
+    super();
+  }
+}
+
+export class TilesNotMovedEvent extends GameEvent {
+  constructor(public direction: Direction) {
+    super();
+  }
+}
+
+export class GameStartedEvent extends GameEvent {}
 
 export class GameOverEvent extends GameEvent {}

@@ -2,6 +2,7 @@ import { Direction } from "./enums";
 
 export interface StartNewGameAction {
   type: "START";
+  serializedState: string;
 }
 
 export interface MoveAction {

@@ -7,13 +7,16 @@ import {
   TileMoveEvent,
   GameEvent,
   TilesNotMovedEvent,
-  GameOverEvent
+  GameOverEvent,
+  TileDeletedEvent,
+  GameStartedEvent
 } from "./events";
 import { Grid } from "./grid";
 import { Tile } from "./tile";
 import { RowProcessor } from "./row-processor";
 import { Action } from "./actions";
 import { stay } from "helpers/async";
+import { ensure } from "helpers/syntax";
 
 export interface IGameState {
   scores: number;
@@ -41,10 +44,17 @@ export class Game2048 {
     return JSON.stringify(state);
   }
 
-  public initFromState(gameState: string): void {
-    const state: IGameState = JSON.parse(gameState);
-    this.scores = state.scores;
-    this.grid = Grid.deserialize(state.gridSerialized);
+  public initFromState(gameState: string): boolean {
+    try {
+      const state: IGameState = JSON.parse(gameState);
+      const scores = ensure(state.scores);
+      const grid = ensure(Grid.deserialize(state.gridSerialized));
+      this.scores = scores;
+      this.grid = grid;
+      return true;
+    } catch (ex) {
+      return false;
+    }
   }
 
   public queueAction(action: Action): void {
@@ -66,10 +76,41 @@ export class Game2048 {
       gameEvents.push(...this.processMoveAction(action.direction));
     }
     if (action.type === "START") {
-      this.scores = 0;
-      const newTile = this.insertNewTileToVacantSpace();
-      if (newTile) {
-        gameEvents.push(new TileCreatedEvent(newTile));
+      if (
+        action.serializedState &&
+        this.initFromState(action.serializedState)
+      ) {
+        gameEvents.push(new GameStartedEvent());
+        for (let irow = 0; irow < this.grid.size; irow++) {
+          for (let icell = 0; icell < this.grid.size; icell++) {
+            if (this.grid.cells[irow][icell] > 0) {
+              gameEvents.push(
+                new TileCreatedEvent({
+                  cellIndex: icell,
+                  rowIndex: irow,
+                  value: this.grid.cells[irow][icell]
+                })
+              );
+            }
+          }
+        }
+      } else {
+        this.scores = 0;
+        gameEvents.push(new GameStartedEvent());
+        for (let irow = 0; irow < this.grid.size; irow++) {
+          for (let icell = 0; icell < this.grid.size; icell++) {
+            if (this.grid.cells[irow][icell] > 0) {
+              gameEvents.push(
+                new TileDeletedEvent({ cellIndex: icell, rowIndex: irow })
+              );
+              this.grid.cells[irow][icell] = 0;
+            }
+          }
+        }
+        const newTile = this.insertNewTileToVacantSpace();
+        if (newTile) {
+          gameEvents.push(new TileCreatedEvent(newTile));
+        }
       }
     }
     return gameEvents;
@@ -131,7 +172,7 @@ export class Game2048 {
       }
       gameEvents.push(new TileCreatedEvent(newTile));
     } else {
-      gameEvents.push(new TilesNotMovedEvent());
+      gameEvents.push(new TilesNotMovedEvent(move));
 
       // Here we need to check if game grid is full - so might be game is finished if there is no possibility to make a movement
       const availTitles = this.grid.availableCells();

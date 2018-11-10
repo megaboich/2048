@@ -25,7 +25,7 @@ export class Grid {
   }
 
   static deserialize(state: string): Grid {
-    const grid = new Grid(1);
+    const grid = new Grid(0);
     grid.initFromState(state);
     return grid;
   }
