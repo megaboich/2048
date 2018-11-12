@@ -15,7 +15,7 @@ import {
   triggerModal
 } from "styles/bulma-helpers";
 
-import "styles/bulma.min.css";
+import "styles/bulma.sass";
 import "styles/open-iconic.css";
 import "styles/app.less";
 

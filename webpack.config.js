@@ -34,6 +34,8 @@ module.exports = function(env) {
         },
         { test: /\.css$/, loaders: ["style-loader", "css-loader"] },
         { test: /\.less$/, loaders: ["style-loader", "css-loader", "less-loader"] },
+        { test: /\.scss$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
+        { test: /\.sass$/, loaders: ["style-loader", "css-loader", "sass-loader"] },
         {
           test: /\.(png|jpg|jpeg|gif|svg|woff)$/,
           loader: "url-loader",
